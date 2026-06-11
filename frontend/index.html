@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Подключение amoCRM</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>amoCRM</h1>
+    <p class="muted">Подключите аккаунт amoCRM к сервису анализа диалогов.</p>
+    <label class="field">
+      <span class="field-label">API ключ</span>
+      <input
+        type="password"
+        id="api-key"
+        name="api-key"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder="Значение из SERVER_API_KEY на бэке"
+      />
+    </label>
+    <p class="err login-err" id="login-err" hidden></p>
+    <button type="button" class="btn" id="login">Войти через amoCRM</button>
+  </main>
+
+  <section class="card" id="settings-card">
+    <h1>Этап и ответственный</h1>
+    <p class="muted">Куда переводить сделку при вызове <code>PATCH /api/v1/leads/:id/stage</code>.</p>
+
+    <label class="field">
+      <span class="field-label">Аккаунт</span>
+      <select id="settings-domain"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Этап</span>
+      <select id="settings-status"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Ответственный</span>
+      <select id="settings-user"></select>
+    </label>
+
+    <p class="err" id="settings-err" hidden></p>
+    <p class="ok" id="settings-ok" hidden></p>
+    <button type="button" class="btn" id="settings-save" disabled>Сохранить</button>
+  </section>
+
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

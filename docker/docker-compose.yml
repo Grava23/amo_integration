@@ -1,0 +1,62 @@
+services:
+  app:
+    build:
+      context: ../
+      dockerfile: Dockerfile
+    container_name: amo_n8n
+    ports:
+      - "${APP_PORT:-8081}:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    environment:
+      # DATABASE_URL собирается из POSTGRES_* (docker/.env). Хост = имя сервиса postgres,
+      # порт внутренний контейнерный (5432, не ${POSTGRES_PORT}). Перекрывает значение из
+      # ../.env, чтобы строка подключения не расходилась с кредами postgres-контейнера.
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@postgres:5432/${POSTGRES_DB:-amo_n8n}?sslmode=disable"
+    command: ["sh", "-lc", "npx prisma migrate deploy && node dist/index.js"]
+    volumes:
+      - /home/jupyteruser/conversation_analysis/companies/amoCRM/Merged/amocrm_responses:/app/amocrm_responses:ro
+    healthcheck:
+      # внутри контейнера приложение слушает 8080 (config.PORT), а не host APP_PORT;
+      # 127.0.0.1 (не localhost) — иначе busybox wget идёт в IPv6 [::1], где app не слушает
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  postgres:
+    image: postgres:16
+    container_name: amo_n8n_postgres
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
+      POSTGRES_DB: ${POSTGRES_DB:-amo_n8n}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-amo_n8n}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5174:5173"
+    env_file:
+      - ../frontend/.env
+    restart: unless-stopped
+
+
+volumes:
+  postgres_data:
+    driver: local

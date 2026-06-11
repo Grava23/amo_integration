@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model oauth_states {
+  state      String    @id @default(uuid())
+  created_at DateTime  @default(now())
+  expired_at DateTime
+  used       Boolean   @default(false)
+}
+
+model integrations {
+  domain        String    @id
+  access_token  String
+  refresh_token String
+  amojo_id      String
+  scope_id      String
+  active        Boolean   @default(true)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+  deleted_at    DateTime?
+
+  settings integration_settings?
+}
+
+// Настройки автоперевода сделки (PATCH /api/v1/leads/:leadId/stage).
+// Значения per-domain: status_id/pipeline_id/responsible_user_id принадлежат
+// конкретному amo-аккаунту, поэтому хранятся рядом с интеграцией, а не в env.
+model integration_settings {
+  domain                     String   @id
+  target_status_id           Int?
+  target_pipeline_id         Int?
+  target_responsible_user_id Int?
+  created_at                 DateTime @default(now())
+  updated_at                 DateTime @updatedAt
+
+  integration integrations @relation(fields: [domain], references: [domain], onDelete: Cascade)
+}
