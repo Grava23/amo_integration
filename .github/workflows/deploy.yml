@@ -19,6 +19,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: 22
         script: |
-          cd /home/jupyteruser/conversation_analysis/companies/amo_integratio
+          cd /home/jupyteruser/conversation_analysis/companies/amo_integration
           git pull origin main
           echo "✅ Deployment completed!"
