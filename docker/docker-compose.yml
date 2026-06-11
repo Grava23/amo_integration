@@ -1,3 +1,5 @@
+name: amo-n8n
+
 services:
   app:
     build:
