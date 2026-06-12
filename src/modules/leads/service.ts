@@ -6,9 +6,30 @@ import { Integration } from "../../models/integration.js";
 import { AddNotesBody, AddNotesResponse } from "../../infra/amo/notes.js";
 import { UpdateLeadBody, UpdateLeadResponse } from "../../infra/amo/leads.js";
 import { LeadStageSettings } from "../../models/integration_settings.js";
+import { LeadResolver } from "./lead_resolver.js";
+import type { LeadResult } from "./schema.js";
 
 export class LeadsService {
     constructor(private amoClient: AmoClient, private leadsRepo: LeadsRepo) { }
+
+    /** Подбираем открытую сделку по телефону или username контакта */
+    async findLeadByContact(domain: string, phone?: string, username?: string): Promise<LeadResult | null> {
+        const contactQuery = phone ?? username
+        if (!contactQuery) {
+            throw new Error("LeadsService - findLeadByContact - phone or username is required")
+        }
+
+        let integration: Integration
+        try {
+            integration = await this.leadsRepo.getIntegrationByDomain(domain)
+        } catch (error) {
+            logger.error("LeadsService - findLeadByContact - get integration by domain", { domain, error: error as Error })
+            throw new Error(`LeadsService - findLeadByContact - get integration by domain: ${error as Error}`)
+        }
+
+        const resolver = new LeadResolver(this.amoClient, this.leadsRepo)
+        return resolver.resolveByContactQuery(integration, contactQuery)
+    }
 
     /** Добавляем обычный (common) комментарий к сделке */
     async addComment(domain: string, leadId: number, text: string): Promise<AddNotesResponse> {

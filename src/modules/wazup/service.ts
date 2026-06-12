@@ -2,17 +2,8 @@ import { AmoClient } from "../../infra/amo/client.js";
 import { WazupLeadResult, WazupWebhookBody } from "./schema.js";
 import { WazupRepo } from "./repo.js";
 import { logger } from "../../logger.js";
-import { withAmoTokenRefresh } from "../../infra/amo/with_token_refresh.js";
 import { Integration } from "../../models/integration.js";
-import { GetContactListParams, GetContactListResponse } from "../../infra/amo/contact.js";
-import { GetLeadResponse } from "../../infra/amo/leads.js";
-
-// amoCRM: глобальные финальные статусы сделки — 142 (успешно реализовано) и 143 (закрыто и не реализовано)
-const CLOSED_STATUS_IDS = new Set([142, 143])
-
-// МОК: при нескольких открытых сделках выбираем сделку на этом статусе.
-// TODO: заменить на реальный status_id, когда уточнят.
-const PRIORITY_OPEN_STATUS_ID = 0
+import { LeadResolver } from "../leads/lead_resolver.js";
 
 export class WazupService {
     constructor(private amoClient: AmoClient, private wazupRepo: WazupRepo) { }
@@ -32,16 +23,16 @@ export class WazupService {
             throw new Error(`WazupService - handleWazupWebhook - integration not found: ${body.domain}`)
         }
 
+        const resolver = new LeadResolver(this.amoClient, this.wazupRepo)
+
         for (const message of body.messages) {
             logger.debug("WazupService - handleWazupWebhook - processing message", { message })
 
-            let getContactsParams: GetContactListParams = {
-                with: ["leads"],
-            }
+            let contactQuery: string | undefined
 
             switch (message.chatType) {
                 case "whatsapp":
-                    getContactsParams.query = message.chatId
+                    contactQuery = message.chatId
                     break
                 case "telegram":
                     if (!message.contact) {
@@ -50,15 +41,14 @@ export class WazupService {
                     }
 
                     if (message.contact.phone) {
-                        getContactsParams.query = message.contact.phone
-                        break
+                        contactQuery = message.contact.phone
                     } else if (message.contact.username) {
-                        getContactsParams.query = message.contact.username
-                        break
+                        contactQuery = message.contact.username
                     } else {
                         logger.warn("WazupService - handleWazupWebhook - message contact phone and username not found", { message })
                         continue
                     }
+                    break
                 case "max":
                     if (!message.contact) {
                         logger.warn("WazupService - handleWazupWebhook - message contact not found", { message })
@@ -70,126 +60,19 @@ export class WazupService {
                         continue
                     }
 
-                    getContactsParams.query = message.contact.phone
+                    contactQuery = message.contact.phone
                     break
                 default:
                     logger.warn("WazupService - handleWazupWebhook - message chat type not supported", { message })
                     continue
             }
 
-            let contacts: GetContactListResponse | null = null
-            try {
-                contacts = await withAmoTokenRefresh(integration, this.wazupRepo, this.amoClient.auth, (accessToken) => this.amoClient.contact.getContacts(integration!.domain, accessToken, getContactsParams))
-            } catch (error) {
-                logger.error("WazupService - handleWazupWebhook - get contacts", { error: error as Error })
-                throw new Error(`WazupService - handleWazupWebhook - get contacts: ${error as Error}`)
+            const result = await resolver.resolveByContactQuery(integration, contactQuery)
+            if (result) {
+                return result
             }
-
-            if (!contacts || (contacts._embedded.contacts).length === 0) {
-                logger.warn("WazupService - handleWazupWebhook - contacts not found", { getContactsParams })
-                continue
-            }
-
-            if ((contacts._embedded.contacts).length > 1) {
-                logger.warn("WazupService - handleWazupWebhook - multiple contacts found", { getContactsParams })
-            }
-
-            const contact = contacts._embedded.contacts[0]
-            if (!contact) {
-                continue
-            }
-
-            const leadIds = (contact._embedded?.leads ?? []).map((lead) => lead.id)
-
-            if (leadIds.length === 0) {
-                logger.warn("WazupService - handleWazupWebhook - contact has no leads", { contactId: contact.id })
-                continue
-            }
-
-            const leads = await this.getLeads(integration, leadIds)
-
-            const selectedLead = this.selectLead(leads)
-            if (!selectedLead) {
-                logger.warn("WazupService - handleWazupWebhook - no suitable lead found", { contactId: contact.id, leadIds })
-                continue
-            }
-
-            return await this.buildLeadResult(integration, selectedLead)
         }
 
         return null
-    }
-
-    /** Получаем полные данные сделок по их id */
-    private async getLeads(integration: Integration, leadIds: number[]): Promise<GetLeadResponse[]> {
-        const leads: GetLeadResponse[] = []
-
-        for (const leadId of leadIds) {
-            try {
-                const lead = await withAmoTokenRefresh(integration, this.wazupRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.getLead(integration.domain, accessToken, leadId, {}))
-                leads.push(lead)
-            } catch (error) {
-                logger.error("WazupService - getLeads - get lead", { leadId, error: error as Error })
-                throw new Error(`WazupService - getLeads - get lead ${leadId}: ${error as Error}`)
-            }
-        }
-
-        return leads
-    }
-
-    private isLeadClosed(lead: GetLeadResponse): boolean {
-        return CLOSED_STATUS_IDS.has(lead.status_id)
-    }
-
-    /**
-     * Выбираем сделку: сначала смотрим только открытые (не закрытые).
-     * Если открытых несколько — берём сделку на приоритетном статусе (пока мок),
-     * иначе фолбэк на первую открытую.
-     */
-    private selectLead(leads: GetLeadResponse[]): GetLeadResponse | null {
-        const openLeads = leads.filter((lead) => !this.isLeadClosed(lead))
-
-        if (openLeads.length === 0) {
-            return null
-        }
-
-        if (openLeads.length === 1) {
-            return openLeads[0] ?? null
-        }
-
-        const priorityLead = openLeads.find((lead) => lead.status_id === PRIORITY_OPEN_STATUS_ID)
-        if (priorityLead) {
-            return priorityLead
-        }
-
-        logger.warn("WazupService - selectLead - multiple open leads, no priority-status match, fallback to first", {
-            leadIds: openLeads.map((lead) => lead.id),
-        })
-        return openLeads[0] ?? null
-    }
-
-    private async buildLeadResult(integration: Integration, lead: GetLeadResponse): Promise<WazupLeadResult> {
-        let responsibleUserName = ""
-        try {
-            const user = await withAmoTokenRefresh(integration, this.wazupRepo, this.amoClient.auth, (accessToken) => this.amoClient.users.getUserByID(integration.domain, accessToken, lead.responsible_user_id, {}))
-            responsibleUserName = user.name
-        } catch (error) {
-            logger.error("WazupService - buildLeadResult - get responsible user", { userId: lead.responsible_user_id, error: error as Error })
-            throw new Error(`WazupService - buildLeadResult - get responsible user ${lead.responsible_user_id}: ${error as Error}`)
-        }
-
-        const customFields = (lead.custom_fields_values ?? []).flatMap((field) =>
-            field.values.map((entry) => ({
-                name: field.field_name,
-                value: entry.value,
-            }))
-        )
-
-        return {
-            lead_id: lead.id,
-            closed: this.isLeadClosed(lead),
-            responsible_user_name: responsibleUserName,
-            custom_fields: customFields,
-        }
     }
 }

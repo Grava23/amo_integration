@@ -1,5 +1,27 @@
 import { z } from "zod"
 
+export const leadResultSchema = z.object({
+    lead_id: z.number(),
+    closed: z.boolean(),
+    responsible_user_name: z.string(),
+    custom_fields: z.array(z.object({
+        name: z.string(),
+        value: z.any(),
+    })),
+})
+
+export type LeadResult = z.infer<typeof leadResultSchema>
+
+export const findLeadQuerySchema = z.object({
+    domain: z.string(),
+    phone: z.string().optional(),
+    username: z.string().optional(),
+}).refine((data) => data.phone || data.username, {
+    message: "phone or username is required",
+})
+
+export type FindLeadQuery = z.infer<typeof findLeadQuerySchema>
+
 export const addLeadCommentParamsSchema = z.object({
     leadId: z.coerce.number().int().positive(),
 })

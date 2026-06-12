@@ -1,8 +1,17 @@
 import { FastifyPluginAsync } from "fastify";
-import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema } from "./schema.js";
-import { addLeadCommentController, changeLeadStageController } from "./controller.js";
+import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema, findLeadQuerySchema } from "./schema.js";
+import { addLeadCommentController, changeLeadStageController, findLeadController } from "./controller.js";
 
 const leadsRoutes: FastifyPluginAsync = async (app) => {
+    app.get("/",
+        {
+            schema:
+            {
+                querystring: findLeadQuerySchema,
+            }
+        },
+        findLeadController)
+
     app.post("/:leadId/notes",
         {
             schema:
