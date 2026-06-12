@@ -37,10 +37,10 @@ const wazupMessageStatusSchema = z.enum([
 ])
 
 const wazupContactSchema = z.object({
-    name: z.string().optional(),
-    avatarUri: z.string().optional(),
-    username: z.string().optional(),
-    phone: z.string().optional(),
+    name: z.string().nullish(),
+    avatarUri: z.string().nullish(),
+    username: z.string().nullish(),
+    phone: z.string().nullish(),
 })
 
 const wazupErrorSchema = z.object({
@@ -56,21 +56,21 @@ const wazupInstPostSchema = z.object({
 })
 
 const wazupOldInfoSchema = z.object({
-    oldText: z.string().optional(),
-    oldAuthorId: z.string().optional(),
-    oldAuthorName: z.string().optional(),
+    oldText: z.string().nullish(),
+    oldAuthorId: z.string().nullish(),
+    oldAuthorName: z.string().nullish(),
 })
 
 const wazupQuotedMessageSchema = z.object({
-    messageId: z.string().uuid().optional(),
-    channelId: z.string().uuid().optional(),
-    chatType: wazupChatTypeSchema.optional(),
-    chatId: z.string().optional(),
-    text: z.string().optional(),
-    type: wazupMessageTypeSchema.optional(),
-    authorName: z.string().optional(),
-    authorId: z.string().optional(),
-    contentUri: z.string().optional(),
+    messageId: z.string().uuid().nullish(),
+    channelId: z.string().uuid().nullish(),
+    chatType: wazupChatTypeSchema.nullish(),
+    chatId: z.string().nullish(),
+    text: z.string().nullish(),
+    type: wazupMessageTypeSchema.nullish(),
+    authorName: z.string().nullish(),
+    authorId: z.string().nullish(),
+    contentUri: z.string().nullish(),
 }).passthrough()
 
 const wazupInteractiveSchema = z.record(z.string(), z.unknown())
@@ -80,24 +80,24 @@ const wazupMessageSchema = z.object({
     channelId: z.string().uuid(),
     chatType: wazupChatTypeSchema,
     chatId: z.string(),
-    avitoProfileId: z.string().optional(),
+    avitoProfileId: z.string().nullish(),
     dateTime: z.string(),
     type: wazupMessageTypeSchema,
     isEcho: z.boolean(),
-    contact: wazupContactSchema.optional(),
-    text: z.string().optional(),
-    contentUri: z.string().optional(),
+    contact: wazupContactSchema.nullish(),
+    text: z.string().nullish(),
+    contentUri: z.string().nullish(),
     status: wazupMessageStatusSchema,
-    error: wazupErrorSchema.optional(),
-    authorName: z.string().optional(),
-    authorId: z.string().optional(),
-    instPost: wazupInstPostSchema.optional(),
-    interactive: z.array(wazupInteractiveSchema).optional(),
-    quotedMessage: wazupQuotedMessageSchema.optional(),
-    sentFromApp: z.boolean().optional(),
-    isEdited: z.boolean().optional(),
-    isDeleted: z.boolean().optional(),
-    oldInfo: wazupOldInfoSchema.optional(),
+    error: wazupErrorSchema.nullish(),
+    authorName: z.string().nullish(),
+    authorId: z.string().nullish(),
+    instPost: wazupInstPostSchema.nullish(),
+    interactive: z.array(wazupInteractiveSchema).nullish(),
+    quotedMessage: wazupQuotedMessageSchema.nullish(),
+    sentFromApp: z.boolean().nullish(),
+    isEdited: z.boolean().nullish(),
+    isDeleted: z.boolean().nullish(),
+    oldInfo: wazupOldInfoSchema.nullish(),
 })
 
 export const wazupWebhookBodySchema = z.object({
