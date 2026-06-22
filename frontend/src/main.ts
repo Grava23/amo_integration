@@ -1,4 +1,5 @@
 import { apiFetch, getApiKey, setApiKey } from "./api.js"
+import "./accounts.js"
 import "./settings.js"
 
 const apiKeyInput = document.getElementById("api-key")

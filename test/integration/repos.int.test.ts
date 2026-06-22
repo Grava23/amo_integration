@@ -31,6 +31,8 @@ afterAll(async () => {
 })
 
 beforeEach(async () => {
+    await prisma.lead_stage_events.deleteMany()
+    // integration_settings удалится каскадом по FK на integrations
     await prisma.integrations.deleteMany()
     await prisma.oauth_states.deleteMany()
 })
@@ -125,6 +127,81 @@ describe("IntegrationRepo (real DB)", () => {
         await repo.updateIntegrationActive("acme.amocrm.ru", false)
         const row = await prisma.integrations.findUniqueOrThrow({ where: { domain: "acme.amocrm.ru" } })
         expect(row.active).toBe(false)
+    })
+
+    it("upsertLeadStageSettings создаёт и обновляет, getLeadStageSettings читает все поля", async () => {
+        await seedIntegration("st.amocrm.ru")
+        const repo = new IntegrationRepo(prisma)
+
+        await repo.upsertLeadStageSettings("st.amocrm.ru", {
+            targetStatusId: 142,
+            targetPipelineId: 1,
+            targetResponsibleUserId: 7,
+            priorityOpenStatusId: 9,
+            commentTemplate: "привет",
+        })
+
+        const got = await repo.getLeadStageSettings("st.amocrm.ru")
+        expect(got).toMatchObject({
+            domain: "st.amocrm.ru",
+            targetStatusId: 142,
+            targetPipelineId: 1,
+            targetResponsibleUserId: 7,
+            priorityOpenStatusId: 9,
+            commentTemplate: "привет",
+        })
+
+        // update-ветка апсерта + очистка полей в null
+        await repo.upsertLeadStageSettings("st.amocrm.ru", {
+            targetStatusId: 200,
+            targetPipelineId: null,
+            targetResponsibleUserId: null,
+            priorityOpenStatusId: null,
+            commentTemplate: null,
+        })
+        const got2 = await repo.getLeadStageSettings("st.amocrm.ru")
+        expect(got2?.targetStatusId).toBe(200)
+        expect(got2?.commentTemplate).toBeNull()
+        expect(got2?.priorityOpenStatusId).toBeNull()
+    })
+
+    it("getLeadStageSettings возвращает null, если настроек нет", async () => {
+        await seedIntegration("none.amocrm.ru")
+        const repo = new IntegrationRepo(prisma)
+        expect(await repo.getLeadStageSettings("none.amocrm.ru")).toBeNull()
+    })
+
+    it("listStageEvents отдаёт записи журнала обоих источников", async () => {
+        await seedIntegration("ev.amocrm.ru")
+        const leadsRepo = new LeadsRepo(prisma)
+        await leadsRepo.createStageEvent({
+            domain: "ev.amocrm.ru", source: "manual", leadId: 111,
+            statusId: 142, pipelineId: null, responsibleUserId: 7, success: true, error: null,
+        })
+        await leadsRepo.createStageEvent({
+            domain: "ev.amocrm.ru", source: "webhook", leadId: null,
+            statusId: null, pipelineId: null, responsibleUserId: null, success: false, error: "нет сделок",
+        })
+
+        const repo = new IntegrationRepo(prisma)
+        const events = await repo.listStageEvents("ev.amocrm.ru")
+
+        expect(events).toHaveLength(2)
+        expect(events.find((e) => e.leadId === 111)?.success).toBe(true)
+        const skip = events.find((e) => e.leadId === null)
+        expect(skip?.source).toBe("webhook")
+        expect(skip?.error).toBe("нет сделок")
+    })
+
+    it("softDeleteIntegration скрывает интеграцию из списка и getIntegrationByDomain", async () => {
+        await seedIntegration("del.amocrm.ru")
+        const repo = new IntegrationRepo(prisma)
+
+        await repo.softDeleteIntegration("del.amocrm.ru", new Date())
+
+        const list = await repo.listIntegrations()
+        expect(list.find((i) => i.domain === "del.amocrm.ru")).toBeUndefined()
+        await expect(repo.getIntegrationByDomain("del.amocrm.ru")).rejects.toBeTruthy()
     })
 })
 

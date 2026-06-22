@@ -30,6 +30,7 @@ export type IntegrationsMinAggregateOutputType = {
   refresh_token: string | null
   amojo_id: string | null
   scope_id: string | null
+  amo_api_token: string | null
   active: boolean | null
   created_at: Date | null
   updated_at: Date | null
@@ -42,6 +43,7 @@ export type IntegrationsMaxAggregateOutputType = {
   refresh_token: string | null
   amojo_id: string | null
   scope_id: string | null
+  amo_api_token: string | null
   active: boolean | null
   created_at: Date | null
   updated_at: Date | null
@@ -54,6 +56,7 @@ export type IntegrationsCountAggregateOutputType = {
   refresh_token: number
   amojo_id: number
   scope_id: number
+  amo_api_token: number
   active: number
   created_at: number
   updated_at: number
@@ -68,6 +71,7 @@ export type IntegrationsMinAggregateInputType = {
   refresh_token?: true
   amojo_id?: true
   scope_id?: true
+  amo_api_token?: true
   active?: true
   created_at?: true
   updated_at?: true
@@ -80,6 +84,7 @@ export type IntegrationsMaxAggregateInputType = {
   refresh_token?: true
   amojo_id?: true
   scope_id?: true
+  amo_api_token?: true
   active?: true
   created_at?: true
   updated_at?: true
@@ -92,6 +97,7 @@ export type IntegrationsCountAggregateInputType = {
   refresh_token?: true
   amojo_id?: true
   scope_id?: true
+  amo_api_token?: true
   active?: true
   created_at?: true
   updated_at?: true
@@ -177,6 +183,7 @@ export type IntegrationsGroupByOutputType = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token: string | null
   active: boolean
   created_at: Date
   updated_at: Date
@@ -210,6 +217,7 @@ export type integrationsWhereInput = {
   refresh_token?: Prisma.StringFilter<"integrations"> | string
   amojo_id?: Prisma.StringFilter<"integrations"> | string
   scope_id?: Prisma.StringFilter<"integrations"> | string
+  amo_api_token?: Prisma.StringNullableFilter<"integrations"> | string | null
   active?: Prisma.BoolFilter<"integrations"> | boolean
   created_at?: Prisma.DateTimeFilter<"integrations"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"integrations"> | Date | string
@@ -223,6 +231,7 @@ export type integrationsOrderByWithRelationInput = {
   refresh_token?: Prisma.SortOrder
   amojo_id?: Prisma.SortOrder
   scope_id?: Prisma.SortOrder
+  amo_api_token?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -239,6 +248,7 @@ export type integrationsWhereUniqueInput = Prisma.AtLeast<{
   refresh_token?: Prisma.StringFilter<"integrations"> | string
   amojo_id?: Prisma.StringFilter<"integrations"> | string
   scope_id?: Prisma.StringFilter<"integrations"> | string
+  amo_api_token?: Prisma.StringNullableFilter<"integrations"> | string | null
   active?: Prisma.BoolFilter<"integrations"> | boolean
   created_at?: Prisma.DateTimeFilter<"integrations"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"integrations"> | Date | string
@@ -252,6 +262,7 @@ export type integrationsOrderByWithAggregationInput = {
   refresh_token?: Prisma.SortOrder
   amojo_id?: Prisma.SortOrder
   scope_id?: Prisma.SortOrder
+  amo_api_token?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -270,6 +281,7 @@ export type integrationsScalarWhereWithAggregatesInput = {
   refresh_token?: Prisma.StringWithAggregatesFilter<"integrations"> | string
   amojo_id?: Prisma.StringWithAggregatesFilter<"integrations"> | string
   scope_id?: Prisma.StringWithAggregatesFilter<"integrations"> | string
+  amo_api_token?: Prisma.StringNullableWithAggregatesFilter<"integrations"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"integrations"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"integrations"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"integrations"> | Date | string
@@ -282,6 +294,7 @@ export type integrationsCreateInput = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token?: string | null
   active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
@@ -295,6 +308,7 @@ export type integrationsUncheckedCreateInput = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token?: string | null
   active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
@@ -308,6 +322,7 @@ export type integrationsUpdateInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -321,6 +336,7 @@ export type integrationsUncheckedUpdateInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -334,6 +350,7 @@ export type integrationsCreateManyInput = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token?: string | null
   active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
@@ -346,6 +363,7 @@ export type integrationsUpdateManyMutationInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -358,6 +376,7 @@ export type integrationsUncheckedUpdateManyInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,6 +389,7 @@ export type integrationsCountOrderByAggregateInput = {
   refresh_token?: Prisma.SortOrder
   amojo_id?: Prisma.SortOrder
   scope_id?: Prisma.SortOrder
+  amo_api_token?: Prisma.SortOrder
   active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -382,6 +402,7 @@ export type integrationsMaxOrderByAggregateInput = {
   refresh_token?: Prisma.SortOrder
   amojo_id?: Prisma.SortOrder
   scope_id?: Prisma.SortOrder
+  amo_api_token?: Prisma.SortOrder
   active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -394,6 +415,7 @@ export type integrationsMinOrderByAggregateInput = {
   refresh_token?: Prisma.SortOrder
   amojo_id?: Prisma.SortOrder
   scope_id?: Prisma.SortOrder
+  amo_api_token?: Prisma.SortOrder
   active?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
@@ -403,6 +425,10 @@ export type integrationsMinOrderByAggregateInput = {
 export type IntegrationsScalarRelationFilter = {
   is?: Prisma.integrationsWhereInput
   isNot?: Prisma.integrationsWhereInput
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type NullableDateTimeFieldUpdateOperationsInput = {
@@ -429,6 +455,7 @@ export type integrationsCreateWithoutSettingsInput = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token?: string | null
   active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
@@ -441,6 +468,7 @@ export type integrationsUncheckedCreateWithoutSettingsInput = {
   refresh_token: string
   amojo_id: string
   scope_id: string
+  amo_api_token?: string | null
   active?: boolean
   created_at?: Date | string
   updated_at?: Date | string
@@ -469,6 +497,7 @@ export type integrationsUpdateWithoutSettingsInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -481,6 +510,7 @@ export type integrationsUncheckedUpdateWithoutSettingsInput = {
   refresh_token?: Prisma.StringFieldUpdateOperationsInput | string
   amojo_id?: Prisma.StringFieldUpdateOperationsInput | string
   scope_id?: Prisma.StringFieldUpdateOperationsInput | string
+  amo_api_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -495,6 +525,7 @@ export type integrationsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   refresh_token?: boolean
   amojo_id?: boolean
   scope_id?: boolean
+  amo_api_token?: boolean
   active?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -508,6 +539,7 @@ export type integrationsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   refresh_token?: boolean
   amojo_id?: boolean
   scope_id?: boolean
+  amo_api_token?: boolean
   active?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -520,6 +552,7 @@ export type integrationsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   refresh_token?: boolean
   amojo_id?: boolean
   scope_id?: boolean
+  amo_api_token?: boolean
   active?: boolean
   created_at?: boolean
   updated_at?: boolean
@@ -532,13 +565,14 @@ export type integrationsSelectScalar = {
   refresh_token?: boolean
   amojo_id?: boolean
   scope_id?: boolean
+  amo_api_token?: boolean
   active?: boolean
   created_at?: boolean
   updated_at?: boolean
   deleted_at?: boolean
 }
 
-export type integrationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"domain" | "access_token" | "refresh_token" | "amojo_id" | "scope_id" | "active" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["integrations"]>
+export type integrationsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"domain" | "access_token" | "refresh_token" | "amojo_id" | "scope_id" | "amo_api_token" | "active" | "created_at" | "updated_at" | "deleted_at", ExtArgs["result"]["integrations"]>
 export type integrationsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   settings?: boolean | Prisma.integrations$settingsArgs<ExtArgs>
 }
@@ -556,6 +590,7 @@ export type $integrationsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     refresh_token: string
     amojo_id: string
     scope_id: string
+    amo_api_token: string | null
     active: boolean
     created_at: Date
     updated_at: Date
@@ -989,6 +1024,7 @@ export interface integrationsFieldRefs {
   readonly refresh_token: Prisma.FieldRef<"integrations", 'String'>
   readonly amojo_id: Prisma.FieldRef<"integrations", 'String'>
   readonly scope_id: Prisma.FieldRef<"integrations", 'String'>
+  readonly amo_api_token: Prisma.FieldRef<"integrations", 'String'>
   readonly active: Prisma.FieldRef<"integrations", 'Boolean'>
   readonly created_at: Prisma.FieldRef<"integrations", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"integrations", 'DateTime'>

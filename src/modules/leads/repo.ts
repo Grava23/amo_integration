@@ -1,6 +1,7 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { Integration } from "../../models/integration.js";
-import { LeadStageSettings } from "../../models/integration_settings.js";
+import { LeadStageSettings, toLeadStageSettings } from "../../models/integration_settings.js";
+import { LeadStageEventInput } from "../../models/lead_stage_event.js";
 
 export class LeadsRepo {
     constructor(private prisma: PrismaClient) { }
@@ -11,14 +12,23 @@ export class LeadsRepo {
             where: { domain },
         })
 
-        if (!row) return null
+        return row ? toLeadStageSettings(row) : null
+    }
 
-        return {
-            domain: row.domain,
-            targetStatusId: row.target_status_id,
-            targetPipelineId: row.target_pipeline_id,
-            targetResponsibleUserId: row.target_responsible_user_id,
-        }
+    /** Пишем запись в журнал смены этапа (best-effort). */
+    async createStageEvent(event: LeadStageEventInput): Promise<void> {
+        await this.prisma.lead_stage_events.create({
+            data: {
+                domain: event.domain,
+                source: event.source,
+                lead_id: event.leadId,
+                status_id: event.statusId,
+                pipeline_id: event.pipelineId,
+                responsible_user_id: event.responsibleUserId,
+                success: event.success,
+                error: event.error,
+            },
+        })
     }
 
     async getIntegrationByDomain(domain: string): Promise<Integration> {
@@ -33,6 +43,7 @@ export class LeadsRepo {
             amojoID: row.amojo_id,
             scopeID: row.scope_id,
             active: row.active,
+            amoApiToken: row.amo_api_token,
         }
     }
 

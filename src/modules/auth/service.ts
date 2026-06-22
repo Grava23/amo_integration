@@ -52,6 +52,7 @@ export class AuthService {
       amojoID: "",
       scopeID: "",
       active: true,
+      amoApiToken: null,
     }
     try {
       integration = await this.authRepo.getIntegrationByDomain(referer)
@@ -64,6 +65,7 @@ export class AuthService {
           amojoID: "",
           scopeID: "",
           active: true,
+          amoApiToken: null,
         }
       } else {
         logger.error("AuthService - completeOauth - get integration by domain", { error: e as Error })

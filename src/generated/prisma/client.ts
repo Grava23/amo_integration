@@ -56,3 +56,8 @@ export type integrations = Prisma.integrationsModel
  * 
  */
 export type integration_settings = Prisma.integration_settingsModel
+/**
+ * Model lead_stage_events
+ * 
+ */
+export type lead_stage_events = Prisma.lead_stage_eventsModel

@@ -386,7 +386,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   oauth_states: 'oauth_states',
   integrations: 'integrations',
-  integration_settings: 'integration_settings'
+  integration_settings: 'integration_settings',
+  lead_stage_events: 'lead_stage_events'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "oauth_states" | "integrations" | "integration_settings"
+    modelProps: "oauth_states" | "integrations" | "integration_settings" | "lead_stage_events"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    lead_stage_events: {
+      payload: Prisma.$lead_stage_eventsPayload<ExtArgs>
+      fields: Prisma.lead_stage_eventsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.lead_stage_eventsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.lead_stage_eventsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        findFirst: {
+          args: Prisma.lead_stage_eventsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.lead_stage_eventsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        findMany: {
+          args: Prisma.lead_stage_eventsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>[]
+        }
+        create: {
+          args: Prisma.lead_stage_eventsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        createMany: {
+          args: Prisma.lead_stage_eventsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.lead_stage_eventsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>[]
+        }
+        delete: {
+          args: Prisma.lead_stage_eventsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        update: {
+          args: Prisma.lead_stage_eventsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        deleteMany: {
+          args: Prisma.lead_stage_eventsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.lead_stage_eventsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.lead_stage_eventsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>[]
+        }
+        upsert: {
+          args: Prisma.lead_stage_eventsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$lead_stage_eventsPayload>
+        }
+        aggregate: {
+          args: Prisma.Lead_stage_eventsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLead_stage_events>
+        }
+        groupBy: {
+          args: Prisma.lead_stage_eventsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Lead_stage_eventsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.lead_stage_eventsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Lead_stage_eventsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -683,6 +758,7 @@ export const IntegrationsScalarFieldEnum = {
   refresh_token: 'refresh_token',
   amojo_id: 'amojo_id',
   scope_id: 'scope_id',
+  amo_api_token: 'amo_api_token',
   active: 'active',
   created_at: 'created_at',
   updated_at: 'updated_at',
@@ -697,11 +773,36 @@ export const Integration_settingsScalarFieldEnum = {
   target_status_id: 'target_status_id',
   target_pipeline_id: 'target_pipeline_id',
   target_responsible_user_id: 'target_responsible_user_id',
+  priority_open_status_id: 'priority_open_status_id',
+  comment_template: 'comment_template',
+  ai_pipeline_id: 'ai_pipeline_id',
+  ai_trigger_status_id: 'ai_trigger_status_id',
+  ai_responsible_user_id: 'ai_responsible_user_id',
+  ai_start_time_field_id: 'ai_start_time_field_id',
+  autoblock_status_id: 'autoblock_status_id',
+  handoff_status_id: 'handoff_status_id',
+  success_status_id: 'success_status_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type Integration_settingsScalarFieldEnum = (typeof Integration_settingsScalarFieldEnum)[keyof typeof Integration_settingsScalarFieldEnum]
+
+
+export const Lead_stage_eventsScalarFieldEnum = {
+  id: 'id',
+  domain: 'domain',
+  source: 'source',
+  lead_id: 'lead_id',
+  status_id: 'status_id',
+  pipeline_id: 'pipeline_id',
+  responsible_user_id: 'responsible_user_id',
+  success: 'success',
+  error: 'error',
+  created_at: 'created_at'
+} as const
+
+export type Lead_stage_eventsScalarFieldEnum = (typeof Lead_stage_eventsScalarFieldEnum)[keyof typeof Lead_stage_eventsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -894,6 +995,7 @@ export type GlobalOmitConfig = {
   oauth_states?: Prisma.oauth_statesOmit
   integrations?: Prisma.integrationsOmit
   integration_settings?: Prisma.integration_settingsOmit
+  lead_stage_events?: Prisma.lead_stage_eventsOmit
 }
 
 /* Types for Logging */

@@ -25,6 +25,13 @@ const updateLeadBodySchema = z.object({
     pipeline_id: z.number().int().optional(),
     // ID нового ответственного пользователя
     responsible_user_id: z.number().int().optional(),
+    // Значения дополнительных полей (напр. «время старта ИИ»)
+    custom_fields_values: z.array(z.object({
+        field_id: z.number().int(),
+        values: z.array(z.object({
+            value: z.any(),
+        })),
+    })).optional(),
 })
 
 export type UpdateLeadBody = z.infer<typeof updateLeadBodySchema>

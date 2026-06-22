@@ -11,4 +11,5 @@
 export type * from './models/oauth_states.js'
 export type * from './models/integrations.js'
 export type * from './models/integration_settings.js'
+export type * from './models/lead_stage_events.js'
 export type * from './commonInputTypes.js'

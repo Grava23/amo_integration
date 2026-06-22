@@ -39,6 +39,12 @@ describe("addLeadCommentBodySchema", () => {
         expect(addLeadCommentBodySchema.safeParse({ domain: "x", text: "" }).success).toBe(false)
     })
 
+    it("разрешает тело без text (используется шаблон домена)", () => {
+        const parsed = addLeadCommentBodySchema.parse({ domain: "x" })
+        expect(parsed.domain).toBe("x")
+        expect(parsed.text).toBeUndefined()
+    })
+
     it("rejects a missing domain", () => {
         expect(addLeadCommentBodySchema.safeParse({ text: "hello" }).success).toBe(false)
     })

@@ -26,6 +26,9 @@ model integrations {
   refresh_token String
   amojo_id      String
   scope_id      String
+  // Статичный долгоживущий Bearer-токен amoCRM (как в n8n). Используется для
+  // вызовов API без OAuth-рефреша. Если null — работает старый OAuth-поток.
+  amo_api_token String?
   active        Boolean   @default(true)
   created_at    DateTime  @default(now())
   updated_at    DateTime  @updatedAt
@@ -42,8 +45,46 @@ model integration_settings {
   target_status_id           Int?
   target_pipeline_id         Int?
   target_responsible_user_id Int?
+  // Этап, на котором выбираем сделку при нескольких открытых (wazup-вебхук)
+  priority_open_status_id    Int?
+  // Текст заметки по умолчанию для POST /leads/:id/notes без явного text
+  comment_template           String?
+  // --- ИИ-воронка (n8n): все ID хранятся в БД per-domain, в коде не хардкодятся ---
+  // Воронка ИИ-наставника
+  ai_pipeline_id             Int?
+  // Этап-триггер вовлечения ИИ (гейт should_engage_ai в POST /leads/resolve)
+  ai_trigger_status_id       Int?
+  // Ответственный-бот (assign_ai)
+  ai_responsible_user_id     Int?
+  // Кастом-поле сделки «время старта ИИ» (проставляется в resolve под капотом)
+  ai_start_time_field_id     Int?
+  // Этап автоблокировки
+  autoblock_status_id        Int?
+  // Этап передачи менеджеру
+  handoff_status_id          Int?
+  // Этап «успешно реализовано»
+  success_status_id          Int?
   created_at                 DateTime @default(now())
   updated_at                 DateTime @updatedAt
 
   integration integrations @relation(fields: [domain], references: [domain], onDelete: Cascade)
+}
+
+// Журнал обработки сделок: ручная смена этапа (manual) и автоматический wazup-вебхук (webhook).
+model lead_stage_events {
+  id                  Int      @id @default(autoincrement())
+  domain              String
+  // Источник события: 'manual' (PATCH /leads/:id/stage) | 'webhook' (wazup)
+  source              String   @default("manual")
+  // У webhook-пропусков (контакт/сделка не найдены) сделки может не быть
+  lead_id             Int?
+  status_id           Int?
+  pipeline_id         Int?
+  responsible_user_id Int?
+  success             Boolean
+  // Причина: текст ошибки или пояснение пропуска ("нет открытых сделок" и т.п.)
+  error               String?
+  created_at          DateTime @default(now())
+
+  @@index([domain, created_at])
 }

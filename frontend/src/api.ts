@@ -47,6 +47,28 @@ export type LeadStageSettingsDTO = {
     status_id: number | null
     pipeline_id: number | null
     responsible_user_id: number | null
+    priority_open_status_id: number | null
+    comment_template: string | null
+    // ИИ-воронка (n8n)
+    ai_pipeline_id: number | null
+    ai_trigger_status_id: number | null
+    ai_responsible_user_id: number | null
+    ai_start_time_field_id: number | null
+    autoblock_status_id: number | null
+    handoff_status_id: number | null
+    success_status_id: number | null
+}
+export type HealthDTO = { ok: true; amojoId: string } | { ok: false; error: string }
+export type ActivityEventDTO = {
+    id: number
+    source: "manual" | "wazup" | "pact" | "ai"
+    lead_id: number | null
+    status_id: number | null
+    pipeline_id: number | null
+    responsible_user_id: number | null
+    success: boolean
+    error: string | null
+    created_at: string
 }
 
 async function readJson<T>(res: Response): Promise<T> {
@@ -82,7 +104,20 @@ export async function getLeadStageSettings(domain: string): Promise<LeadStageSet
 
 export async function saveLeadStageSettings(
     domain: string,
-    body: { status_id: number | null; pipeline_id: number | null; responsible_user_id: number | null },
+    body: {
+        status_id: number | null
+        pipeline_id: number | null
+        responsible_user_id: number | null
+        priority_open_status_id: number | null
+        comment_template: string | null
+        ai_pipeline_id: number | null
+        ai_trigger_status_id: number | null
+        ai_responsible_user_id: number | null
+        ai_start_time_field_id: number | null
+        autoblock_status_id: number | null
+        handoff_status_id: number | null
+        success_status_id: number | null
+    },
 ): Promise<LeadStageSettingsDTO> {
     const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}/lead-stage-settings`, {
         method: "PUT",
@@ -90,4 +125,52 @@ export async function saveLeadStageSettings(
         body: JSON.stringify(body),
     })
     return readJson<LeadStageSettingsDTO>(res)
+}
+
+// Статичный Bearer-токен amoCRM для домена (write-only, в GET настроек не возвращается).
+export async function setAmoToken(domain: string, token: string): Promise<void> {
+    const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}/amo-token`, {
+        method: "PUT",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ amo_api_token: token }),
+    })
+    await readJson<{ message: string }>(res)
+}
+
+export async function setIntegrationActive(domain: string, active: boolean): Promise<void> {
+    const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}/active`, {
+        method: "PATCH",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ active }),
+    })
+    await readJson<{ message: string }>(res)
+}
+
+export async function disconnectIntegration(domain: string): Promise<void> {
+    const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}`, {
+        method: "DELETE",
+        headers: { Accept: "application/json" },
+    })
+    await readJson<{ message: string }>(res)
+}
+
+export async function checkHealth(domain: string): Promise<HealthDTO> {
+    const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}/health`, { headers: { Accept: "application/json" } })
+    return readJson<HealthDTO>(res)
+}
+
+export async function getActivity(domain: string): Promise<ActivityEventDTO[]> {
+    const res = await apiFetch(`/api/v1/integration/${encodeURIComponent(domain)}/activity`, { headers: { Accept: "application/json" } })
+    const body = await readJson<{ events: ActivityEventDTO[] }>(res)
+    return body.events
+}
+
+// Тестовый прогон смены этапа по конкретной сделке (использует сохранённые настройки домена).
+export async function changeLeadStage(domain: string, leadId: number): Promise<unknown> {
+    const res = await apiFetch(`/api/v1/leads/${leadId}/stage`, {
+        method: "PATCH",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ domain }),
+    })
+    return readJson<unknown>(res)
 }

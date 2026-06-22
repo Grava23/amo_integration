@@ -39,6 +39,7 @@ export class AuthRepo {
       amojoID: row.amojo_id,
       scopeID: row.scope_id,
       active: row.active,
+      amoApiToken: row.amo_api_token,
     }
   }
 

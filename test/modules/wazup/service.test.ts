@@ -48,6 +48,8 @@ describe("WazupService.handleWazupWebhook", () => {
         repo = {
             getIntegrationByDomain: vi.fn().mockResolvedValue(makeIntegration()),
             updateIntegrationTokens: vi.fn().mockResolvedValue(undefined),
+            getLeadStageSettings: vi.fn().mockResolvedValue(null),
+            createLeadEvent: vi.fn().mockResolvedValue(undefined),
         }
         amoClient = {
             auth: { refreshToken: vi.fn() },
@@ -91,6 +93,41 @@ describe("WazupService.handleWazupWebhook", () => {
         )
     })
 
+    it("пишет в журнал успешный исход (source=wazup, lead_id)", async () => {
+        amoClient.contact.getContacts.mockResolvedValue(contactsWithLeads([1]))
+        amoClient.leads.getLead.mockResolvedValue(lead(1, 5))
+        const svc = new WazupService(amoClient, repo)
+        await svc.handleWazupWebhook(whatsappBody())
+        expect(repo.createLeadEvent).toHaveBeenCalledWith(expect.objectContaining({
+            domain: "test.amocrm.ru",
+            source: "wazup",
+            leadId: 1,
+            success: true,
+            error: null,
+        }))
+    })
+
+    it("пишет в журнал пропуск с причиной, если у контакта нет сделок", async () => {
+        amoClient.contact.getContacts.mockResolvedValue(contactsWithLeads([]))
+        const svc = new WazupService(amoClient, repo)
+        await svc.handleWazupWebhook(whatsappBody())
+        expect(repo.createLeadEvent).toHaveBeenCalledWith(expect.objectContaining({
+            source: "wazup",
+            success: false,
+            error: "у контакта нет сделок",
+        }))
+    })
+
+    it("пишет в журнал ошибку, если getContacts упал", async () => {
+        amoClient.contact.getContacts.mockRejectedValue(new Error("amo down"))
+        const svc = new WazupService(amoClient, repo)
+        await expect(svc.handleWazupWebhook(whatsappBody())).rejects.toThrow()
+        expect(repo.createLeadEvent).toHaveBeenCalledWith(expect.objectContaining({
+            source: "wazup",
+            success: false,
+        }))
+    })
+
     it("разворачивает несколько значений кастомного поля", async () => {
         amoClient.contact.getContacts.mockResolvedValue(contactsWithLeads([1]))
         amoClient.leads.getLead.mockResolvedValue(
@@ -120,14 +157,33 @@ describe("WazupService.handleWazupWebhook", () => {
         expect(result?.lead_id).toBe(1)
     })
 
-    it("при нескольких открытых выбирает сделку на приоритетном статусе (мок=0)", async () => {
+    it("при нескольких открытых выбирает сделку на приоритетном статусе из настроек", async () => {
+        repo.getLeadStageSettings.mockResolvedValue({
+            domain: "test.amocrm.ru",
+            targetStatusId: null,
+            targetPipelineId: null,
+            targetResponsibleUserId: null,
+            priorityOpenStatusId: 9,
+            commentTemplate: null,
+        })
         amoClient.contact.getContacts.mockResolvedValue(contactsWithLeads([1, 2]))
         amoClient.leads.getLead.mockImplementation(async (_d: string, _t: string, id: number) =>
-            id === 2 ? lead(2, 0) : lead(1, 5),
+            id === 2 ? lead(2, 9) : lead(1, 5),
         )
         const svc = new WazupService(amoClient, repo)
         const result = await svc.handleWazupWebhook(whatsappBody())
         expect(result?.lead_id).toBe(2)
+    })
+
+    it("приоритетный этап не задан в настройках → берёт первую открытую", async () => {
+        // repo.getLeadStageSettings по умолчанию null
+        amoClient.contact.getContacts.mockResolvedValue(contactsWithLeads([1, 2]))
+        amoClient.leads.getLead.mockImplementation(async (_d: string, _t: string, id: number) =>
+            id === 2 ? lead(2, 9) : lead(1, 5),
+        )
+        const svc = new WazupService(amoClient, repo)
+        const result = await svc.handleWazupWebhook(whatsappBody())
+        expect(result?.lead_id).toBe(1)
     })
 
     it("возвращает null, если все сделки закрыты", async () => {

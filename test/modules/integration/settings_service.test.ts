@@ -27,10 +27,14 @@ describe("IntegrationSettingsService", () => {
                 targetStatusId: 142,
                 targetPipelineId: 1,
                 targetResponsibleUserId: 7,
+                priorityOpenStatusId: 9,
+                commentTemplate: "привет",
             }),
+            listStageEvents: vi.fn().mockResolvedValue([]),
         }
         amoClient = {
             auth: { refreshToken: vi.fn() },
+            account: { getAmojoID: vi.fn().mockResolvedValue("amojo-1") },
             leads: { getPipelines: vi.fn().mockResolvedValue({ _embedded: { pipelines: [] } }) },
             users: { getUsers: vi.fn().mockResolvedValue({ _embedded: { users: [] } }) },
         }
@@ -44,19 +48,55 @@ describe("IntegrationSettingsService", () => {
             targetStatusId: null,
             targetPipelineId: null,
             targetResponsibleUserId: null,
+            priorityOpenStatusId: null,
+            commentTemplate: null,
+            aiPipelineId: null,
+            aiTriggerStatusId: null,
+            aiResponsibleUserId: null,
+            aiStartTimeFieldId: null,
+            autoblockStatusId: null,
+            handoffStatusId: null,
+            successStatusId: null,
         })
     })
 
     it("saveLeadStageSettings: мапит camelCase и делегирует repo.upsert", async () => {
         const svc = new IntegrationSettingsService(amoClient, repo)
-        const res = await svc.saveLeadStageSettings("test.amocrm.ru", { statusId: 142, pipelineId: 1, responsibleUserId: 7 })
+        const res = await svc.saveLeadStageSettings("test.amocrm.ru", {
+            statusId: 142,
+            pipelineId: 1,
+            responsibleUserId: 7,
+            priorityOpenStatusId: 9,
+            commentTemplate: "привет",
+        })
 
         expect(repo.upsertLeadStageSettings).toHaveBeenCalledWith("test.amocrm.ru", {
             targetStatusId: 142,
             targetPipelineId: 1,
             targetResponsibleUserId: 7,
+            priorityOpenStatusId: 9,
+            commentTemplate: "привет",
         })
         expect(res.targetStatusId).toBe(142)
+    })
+
+    it("checkHealth: ok=true при успешном вызове amo", async () => {
+        const svc = new IntegrationSettingsService(amoClient, repo)
+        const res = await svc.checkHealth("test.amocrm.ru")
+        expect(res).toEqual({ ok: true, amojoId: "amojo-1" })
+    })
+
+    it("checkHealth: ok=false, если amo-вызов упал (не роняем)", async () => {
+        amoClient.account.getAmojoID.mockRejectedValue(new Error("HTTP 500: boom"))
+        const svc = new IntegrationSettingsService(amoClient, repo)
+        const res = await svc.checkHealth("test.amocrm.ru")
+        expect(res.ok).toBe(false)
+    })
+
+    it("listActivity: делегирует repo.listStageEvents", async () => {
+        const svc = new IntegrationSettingsService(amoClient, repo)
+        await svc.listActivity("test.amocrm.ru")
+        expect(repo.listStageEvents).toHaveBeenCalledWith("test.amocrm.ru")
     })
 
     it("getPipelines: проксирует amo через token refresh", async () => {

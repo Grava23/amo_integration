@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   oauth_states: 'oauth_states',
   integrations: 'integrations',
-  integration_settings: 'integration_settings'
+  integration_settings: 'integration_settings',
+  lead_stage_events: 'lead_stage_events'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,6 +89,7 @@ export const IntegrationsScalarFieldEnum = {
   refresh_token: 'refresh_token',
   amojo_id: 'amojo_id',
   scope_id: 'scope_id',
+  amo_api_token: 'amo_api_token',
   active: 'active',
   created_at: 'created_at',
   updated_at: 'updated_at',
@@ -102,11 +104,36 @@ export const Integration_settingsScalarFieldEnum = {
   target_status_id: 'target_status_id',
   target_pipeline_id: 'target_pipeline_id',
   target_responsible_user_id: 'target_responsible_user_id',
+  priority_open_status_id: 'priority_open_status_id',
+  comment_template: 'comment_template',
+  ai_pipeline_id: 'ai_pipeline_id',
+  ai_trigger_status_id: 'ai_trigger_status_id',
+  ai_responsible_user_id: 'ai_responsible_user_id',
+  ai_start_time_field_id: 'ai_start_time_field_id',
+  autoblock_status_id: 'autoblock_status_id',
+  handoff_status_id: 'handoff_status_id',
+  success_status_id: 'success_status_id',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const
 
 export type Integration_settingsScalarFieldEnum = (typeof Integration_settingsScalarFieldEnum)[keyof typeof Integration_settingsScalarFieldEnum]
+
+
+export const Lead_stage_eventsScalarFieldEnum = {
+  id: 'id',
+  domain: 'domain',
+  source: 'source',
+  lead_id: 'lead_id',
+  status_id: 'status_id',
+  pipeline_id: 'pipeline_id',
+  responsible_user_id: 'responsible_user_id',
+  success: 'success',
+  error: 'error',
+  created_at: 'created_at'
+} as const
+
+export type Lead_stage_eventsScalarFieldEnum = (typeof Lead_stage_eventsScalarFieldEnum)[keyof typeof Lead_stage_eventsScalarFieldEnum]
 
 
 export const SortOrder = {

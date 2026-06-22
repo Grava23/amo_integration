@@ -1,17 +1,8 @@
 import { FastifyPluginAsync } from "fastify";
-import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema, findLeadQuerySchema } from "./schema.js";
-import { addLeadCommentController, changeLeadStageController, findLeadController } from "./controller.js";
+import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema, resolveLeadBodySchema, transitionLeadParamsSchema, transitionLeadBodySchema } from "./schema.js";
+import { addLeadCommentController, changeLeadStageController, resolveLeadController, transitionLeadController } from "./controller.js";
 
 const leadsRoutes: FastifyPluginAsync = async (app) => {
-    app.get("/",
-        {
-            schema:
-            {
-                querystring: findLeadQuerySchema,
-            }
-        },
-        findLeadController)
-
     app.post("/:leadId/notes",
         {
             schema:
@@ -31,6 +22,22 @@ const leadsRoutes: FastifyPluginAsync = async (app) => {
             }
         },
         changeLeadStageController)
+
+    // ИИ-воронка: подбор сделки по входящему сообщению (контакт + сделка + гейт).
+    app.post("/resolve",
+        { schema: { body: resolveLeadBodySchema } },
+        resolveLeadController)
+
+    // ИИ-воронка: переход сделки (assign_ai | autoblock | handoff | success).
+    app.post("/:leadId/transition",
+        {
+            schema:
+            {
+                params: transitionLeadParamsSchema,
+                body: transitionLeadBodySchema,
+            }
+        },
+        transitionLeadController)
 }
 
 export default leadsRoutes;

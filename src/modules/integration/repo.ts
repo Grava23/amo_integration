@@ -1,6 +1,7 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import { Integration } from "../../models/integration.js";
-import { LeadStageSettings } from "../../models/integration_settings.js";
+import { LeadStageSettings, toLeadStageSettings } from "../../models/integration_settings.js";
+import { LeadStageEvent } from "../../models/lead_stage_event.js";
 
 export type IntegrationListItem = {
     domain: string
@@ -14,6 +15,14 @@ export class IntegrationRepo {
         return await this.prisma.integrations.update({
             where: { domain, deleted_at: null },
             data: { active },
+        })
+    }
+
+    /** Мягкое отключение интеграции: проставляем deleted_at, строка перестаёт быть видимой. */
+    async softDeleteIntegration(domain: string, now: Date) {
+        return await this.prisma.integrations.update({
+            where: { domain, deleted_at: null },
+            data: { deleted_at: now, active: false },
         })
     }
 
@@ -42,6 +51,7 @@ export class IntegrationRepo {
             amojoID: row.amojo_id,
             scopeID: row.scope_id,
             active: row.active,
+            amoApiToken: row.amo_api_token,
         }
     }
 
@@ -62,14 +72,7 @@ export class IntegrationRepo {
             where: { domain },
         })
 
-        if (!row) return null
-
-        return {
-            domain: row.domain,
-            targetStatusId: row.target_status_id,
-            targetPipelineId: row.target_pipeline_id,
-            targetResponsibleUserId: row.target_responsible_user_id,
-        }
+        return row ? toLeadStageSettings(row) : null
     }
 
     async upsertLeadStageSettings(domain: string, settings: Omit<LeadStageSettings, "domain">): Promise<LeadStageSettings> {
@@ -77,6 +80,15 @@ export class IntegrationRepo {
             target_status_id: settings.targetStatusId,
             target_pipeline_id: settings.targetPipelineId,
             target_responsible_user_id: settings.targetResponsibleUserId,
+            priority_open_status_id: settings.priorityOpenStatusId,
+            comment_template: settings.commentTemplate,
+            ai_pipeline_id: settings.aiPipelineId,
+            ai_trigger_status_id: settings.aiTriggerStatusId,
+            ai_responsible_user_id: settings.aiResponsibleUserId,
+            ai_start_time_field_id: settings.aiStartTimeFieldId,
+            autoblock_status_id: settings.autoblockStatusId,
+            handoff_status_id: settings.handoffStatusId,
+            success_status_id: settings.successStatusId,
         }
 
         const row = await this.prisma.integration_settings.upsert({
@@ -85,11 +97,36 @@ export class IntegrationRepo {
             update: data,
         })
 
-        return {
-            domain: row.domain,
-            targetStatusId: row.target_status_id,
-            targetPipelineId: row.target_pipeline_id,
-            targetResponsibleUserId: row.target_responsible_user_id,
-        }
+        return toLeadStageSettings(row)
+    }
+
+    /** Сохраняем статичный Bearer-токен amoCRM для домена. */
+    async setAmoToken(domain: string, token: string) {
+        return await this.prisma.integrations.update({
+            where: { domain, deleted_at: null },
+            data: { amo_api_token: token },
+        })
+    }
+
+    /** Последние записи журнала смены этапа для домена. */
+    async listStageEvents(domain: string, limit = 20): Promise<LeadStageEvent[]> {
+        const rows = await this.prisma.lead_stage_events.findMany({
+            where: { domain },
+            orderBy: { created_at: "desc" },
+            take: limit,
+        })
+
+        return rows.map((r) => ({
+            id: r.id,
+            domain: r.domain,
+            source: r.source === "wazup" || r.source === "pact" || r.source === "ai" ? r.source : "manual",
+            leadId: r.lead_id,
+            statusId: r.status_id,
+            pipelineId: r.pipeline_id,
+            responsibleUserId: r.responsible_user_id,
+            success: r.success,
+            error: r.error,
+            createdAt: r.created_at,
+        }))
     }
 }

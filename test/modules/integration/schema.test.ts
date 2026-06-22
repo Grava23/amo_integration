@@ -46,4 +46,19 @@ describe("leadStageSettingsBodySchema", () => {
         expect(leadStageSettingsBodySchema.safeParse({ status_id: 0 }).success).toBe(false)
         expect(leadStageSettingsBodySchema.safeParse({ pipeline_id: -1 }).success).toBe(false)
     })
+
+    it("парсит priority_open_status_id и comment_template", () => {
+        const parsed = leadStageSettingsBodySchema.parse({ priority_open_status_id: "9", comment_template: "  привет  " })
+        expect(parsed.priority_open_status_id).toBe(9)
+        expect(parsed.comment_template).toBe("привет")
+    })
+
+    it("разрешает null для comment_template (очистка)", () => {
+        expect(leadStageSettingsBodySchema.parse({ comment_template: null }).comment_template).toBeNull()
+    })
+
+    it("отклоняет пустой/из пробелов comment_template", () => {
+        expect(leadStageSettingsBodySchema.safeParse({ comment_template: "" }).success).toBe(false)
+        expect(leadStageSettingsBodySchema.safeParse({ comment_template: "   " }).success).toBe(false)
+    })
 })

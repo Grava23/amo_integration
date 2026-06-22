@@ -30,12 +30,28 @@ export type Integration_settingsAvgAggregateOutputType = {
   target_status_id: number | null
   target_pipeline_id: number | null
   target_responsible_user_id: number | null
+  priority_open_status_id: number | null
+  ai_pipeline_id: number | null
+  ai_trigger_status_id: number | null
+  ai_responsible_user_id: number | null
+  ai_start_time_field_id: number | null
+  autoblock_status_id: number | null
+  handoff_status_id: number | null
+  success_status_id: number | null
 }
 
 export type Integration_settingsSumAggregateOutputType = {
   target_status_id: number | null
   target_pipeline_id: number | null
   target_responsible_user_id: number | null
+  priority_open_status_id: number | null
+  ai_pipeline_id: number | null
+  ai_trigger_status_id: number | null
+  ai_responsible_user_id: number | null
+  ai_start_time_field_id: number | null
+  autoblock_status_id: number | null
+  handoff_status_id: number | null
+  success_status_id: number | null
 }
 
 export type Integration_settingsMinAggregateOutputType = {
@@ -43,6 +59,15 @@ export type Integration_settingsMinAggregateOutputType = {
   target_status_id: number | null
   target_pipeline_id: number | null
   target_responsible_user_id: number | null
+  priority_open_status_id: number | null
+  comment_template: string | null
+  ai_pipeline_id: number | null
+  ai_trigger_status_id: number | null
+  ai_responsible_user_id: number | null
+  ai_start_time_field_id: number | null
+  autoblock_status_id: number | null
+  handoff_status_id: number | null
+  success_status_id: number | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -52,6 +77,15 @@ export type Integration_settingsMaxAggregateOutputType = {
   target_status_id: number | null
   target_pipeline_id: number | null
   target_responsible_user_id: number | null
+  priority_open_status_id: number | null
+  comment_template: string | null
+  ai_pipeline_id: number | null
+  ai_trigger_status_id: number | null
+  ai_responsible_user_id: number | null
+  ai_start_time_field_id: number | null
+  autoblock_status_id: number | null
+  handoff_status_id: number | null
+  success_status_id: number | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -61,6 +95,15 @@ export type Integration_settingsCountAggregateOutputType = {
   target_status_id: number
   target_pipeline_id: number
   target_responsible_user_id: number
+  priority_open_status_id: number
+  comment_template: number
+  ai_pipeline_id: number
+  ai_trigger_status_id: number
+  ai_responsible_user_id: number
+  ai_start_time_field_id: number
+  autoblock_status_id: number
+  handoff_status_id: number
+  success_status_id: number
   created_at: number
   updated_at: number
   _all: number
@@ -71,12 +114,28 @@ export type Integration_settingsAvgAggregateInputType = {
   target_status_id?: true
   target_pipeline_id?: true
   target_responsible_user_id?: true
+  priority_open_status_id?: true
+  ai_pipeline_id?: true
+  ai_trigger_status_id?: true
+  ai_responsible_user_id?: true
+  ai_start_time_field_id?: true
+  autoblock_status_id?: true
+  handoff_status_id?: true
+  success_status_id?: true
 }
 
 export type Integration_settingsSumAggregateInputType = {
   target_status_id?: true
   target_pipeline_id?: true
   target_responsible_user_id?: true
+  priority_open_status_id?: true
+  ai_pipeline_id?: true
+  ai_trigger_status_id?: true
+  ai_responsible_user_id?: true
+  ai_start_time_field_id?: true
+  autoblock_status_id?: true
+  handoff_status_id?: true
+  success_status_id?: true
 }
 
 export type Integration_settingsMinAggregateInputType = {
@@ -84,6 +143,15 @@ export type Integration_settingsMinAggregateInputType = {
   target_status_id?: true
   target_pipeline_id?: true
   target_responsible_user_id?: true
+  priority_open_status_id?: true
+  comment_template?: true
+  ai_pipeline_id?: true
+  ai_trigger_status_id?: true
+  ai_responsible_user_id?: true
+  ai_start_time_field_id?: true
+  autoblock_status_id?: true
+  handoff_status_id?: true
+  success_status_id?: true
   created_at?: true
   updated_at?: true
 }
@@ -93,6 +161,15 @@ export type Integration_settingsMaxAggregateInputType = {
   target_status_id?: true
   target_pipeline_id?: true
   target_responsible_user_id?: true
+  priority_open_status_id?: true
+  comment_template?: true
+  ai_pipeline_id?: true
+  ai_trigger_status_id?: true
+  ai_responsible_user_id?: true
+  ai_start_time_field_id?: true
+  autoblock_status_id?: true
+  handoff_status_id?: true
+  success_status_id?: true
   created_at?: true
   updated_at?: true
 }
@@ -102,6 +179,15 @@ export type Integration_settingsCountAggregateInputType = {
   target_status_id?: true
   target_pipeline_id?: true
   target_responsible_user_id?: true
+  priority_open_status_id?: true
+  comment_template?: true
+  ai_pipeline_id?: true
+  ai_trigger_status_id?: true
+  ai_responsible_user_id?: true
+  ai_start_time_field_id?: true
+  autoblock_status_id?: true
+  handoff_status_id?: true
+  success_status_id?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -198,6 +284,15 @@ export type Integration_settingsGroupByOutputType = {
   target_status_id: number | null
   target_pipeline_id: number | null
   target_responsible_user_id: number | null
+  priority_open_status_id: number | null
+  comment_template: string | null
+  ai_pipeline_id: number | null
+  ai_trigger_status_id: number | null
+  ai_responsible_user_id: number | null
+  ai_start_time_field_id: number | null
+  autoblock_status_id: number | null
+  handoff_status_id: number | null
+  success_status_id: number | null
   created_at: Date
   updated_at: Date
   _count: Integration_settingsCountAggregateOutputType | null
@@ -230,6 +325,15 @@ export type integration_settingsWhereInput = {
   target_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   target_pipeline_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   target_responsible_user_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  priority_open_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  comment_template?: Prisma.StringNullableFilter<"integration_settings"> | string | null
+  ai_pipeline_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_trigger_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_responsible_user_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_start_time_field_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  autoblock_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  handoff_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  success_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   created_at?: Prisma.DateTimeFilter<"integration_settings"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"integration_settings"> | Date | string
   integration?: Prisma.XOR<Prisma.IntegrationsScalarRelationFilter, Prisma.integrationsWhereInput>
@@ -240,6 +344,15 @@ export type integration_settingsOrderByWithRelationInput = {
   target_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrderInput | Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  comment_template?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  success_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   integration?: Prisma.integrationsOrderByWithRelationInput
@@ -253,6 +366,15 @@ export type integration_settingsWhereUniqueInput = Prisma.AtLeast<{
   target_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   target_pipeline_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   target_responsible_user_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  priority_open_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  comment_template?: Prisma.StringNullableFilter<"integration_settings"> | string | null
+  ai_pipeline_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_trigger_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_responsible_user_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  ai_start_time_field_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  autoblock_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  handoff_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
+  success_status_id?: Prisma.IntNullableFilter<"integration_settings"> | number | null
   created_at?: Prisma.DateTimeFilter<"integration_settings"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"integration_settings"> | Date | string
   integration?: Prisma.XOR<Prisma.IntegrationsScalarRelationFilter, Prisma.integrationsWhereInput>
@@ -263,6 +385,15 @@ export type integration_settingsOrderByWithAggregationInput = {
   target_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrderInput | Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  comment_template?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  success_status_id?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.integration_settingsCountOrderByAggregateInput
@@ -280,6 +411,15 @@ export type integration_settingsScalarWhereWithAggregatesInput = {
   target_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
   target_pipeline_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
   target_responsible_user_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  priority_open_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  comment_template?: Prisma.StringNullableWithAggregatesFilter<"integration_settings"> | string | null
+  ai_pipeline_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  ai_trigger_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  ai_responsible_user_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  ai_start_time_field_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  autoblock_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  handoff_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
+  success_status_id?: Prisma.IntNullableWithAggregatesFilter<"integration_settings"> | number | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"integration_settings"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"integration_settings"> | Date | string
 }
@@ -288,6 +428,15 @@ export type integration_settingsCreateInput = {
   target_status_id?: number | null
   target_pipeline_id?: number | null
   target_responsible_user_id?: number | null
+  priority_open_status_id?: number | null
+  comment_template?: string | null
+  ai_pipeline_id?: number | null
+  ai_trigger_status_id?: number | null
+  ai_responsible_user_id?: number | null
+  ai_start_time_field_id?: number | null
+  autoblock_status_id?: number | null
+  handoff_status_id?: number | null
+  success_status_id?: number | null
   created_at?: Date | string
   updated_at?: Date | string
   integration: Prisma.integrationsCreateNestedOneWithoutSettingsInput
@@ -298,6 +447,15 @@ export type integration_settingsUncheckedCreateInput = {
   target_status_id?: number | null
   target_pipeline_id?: number | null
   target_responsible_user_id?: number | null
+  priority_open_status_id?: number | null
+  comment_template?: string | null
+  ai_pipeline_id?: number | null
+  ai_trigger_status_id?: number | null
+  ai_responsible_user_id?: number | null
+  ai_start_time_field_id?: number | null
+  autoblock_status_id?: number | null
+  handoff_status_id?: number | null
+  success_status_id?: number | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -306,6 +464,15 @@ export type integration_settingsUpdateInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   integration?: Prisma.integrationsUpdateOneRequiredWithoutSettingsNestedInput
@@ -316,6 +483,15 @@ export type integration_settingsUncheckedUpdateInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -325,6 +501,15 @@ export type integration_settingsCreateManyInput = {
   target_status_id?: number | null
   target_pipeline_id?: number | null
   target_responsible_user_id?: number | null
+  priority_open_status_id?: number | null
+  comment_template?: string | null
+  ai_pipeline_id?: number | null
+  ai_trigger_status_id?: number | null
+  ai_responsible_user_id?: number | null
+  ai_start_time_field_id?: number | null
+  autoblock_status_id?: number | null
+  handoff_status_id?: number | null
+  success_status_id?: number | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -333,6 +518,15 @@ export type integration_settingsUpdateManyMutationInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -342,6 +536,15 @@ export type integration_settingsUncheckedUpdateManyInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -356,6 +559,15 @@ export type integration_settingsCountOrderByAggregateInput = {
   target_status_id?: Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrder
+  comment_template?: Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrder
+  success_status_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -364,6 +576,14 @@ export type integration_settingsAvgOrderByAggregateInput = {
   target_status_id?: Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrder
+  success_status_id?: Prisma.SortOrder
 }
 
 export type integration_settingsMaxOrderByAggregateInput = {
@@ -371,6 +591,15 @@ export type integration_settingsMaxOrderByAggregateInput = {
   target_status_id?: Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrder
+  comment_template?: Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrder
+  success_status_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -380,6 +609,15 @@ export type integration_settingsMinOrderByAggregateInput = {
   target_status_id?: Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrder
+  comment_template?: Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrder
+  success_status_id?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -388,6 +626,14 @@ export type integration_settingsSumOrderByAggregateInput = {
   target_status_id?: Prisma.SortOrder
   target_pipeline_id?: Prisma.SortOrder
   target_responsible_user_id?: Prisma.SortOrder
+  priority_open_status_id?: Prisma.SortOrder
+  ai_pipeline_id?: Prisma.SortOrder
+  ai_trigger_status_id?: Prisma.SortOrder
+  ai_responsible_user_id?: Prisma.SortOrder
+  ai_start_time_field_id?: Prisma.SortOrder
+  autoblock_status_id?: Prisma.SortOrder
+  handoff_status_id?: Prisma.SortOrder
+  success_status_id?: Prisma.SortOrder
 }
 
 export type integration_settingsCreateNestedOneWithoutIntegrationInput = {
@@ -434,6 +680,15 @@ export type integration_settingsCreateWithoutIntegrationInput = {
   target_status_id?: number | null
   target_pipeline_id?: number | null
   target_responsible_user_id?: number | null
+  priority_open_status_id?: number | null
+  comment_template?: string | null
+  ai_pipeline_id?: number | null
+  ai_trigger_status_id?: number | null
+  ai_responsible_user_id?: number | null
+  ai_start_time_field_id?: number | null
+  autoblock_status_id?: number | null
+  handoff_status_id?: number | null
+  success_status_id?: number | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -442,6 +697,15 @@ export type integration_settingsUncheckedCreateWithoutIntegrationInput = {
   target_status_id?: number | null
   target_pipeline_id?: number | null
   target_responsible_user_id?: number | null
+  priority_open_status_id?: number | null
+  comment_template?: string | null
+  ai_pipeline_id?: number | null
+  ai_trigger_status_id?: number | null
+  ai_responsible_user_id?: number | null
+  ai_start_time_field_id?: number | null
+  autoblock_status_id?: number | null
+  handoff_status_id?: number | null
+  success_status_id?: number | null
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -466,6 +730,15 @@ export type integration_settingsUpdateWithoutIntegrationInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -474,6 +747,15 @@ export type integration_settingsUncheckedUpdateWithoutIntegrationInput = {
   target_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   target_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  priority_open_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  comment_template?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ai_pipeline_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_trigger_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_responsible_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  ai_start_time_field_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  autoblock_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  handoff_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  success_status_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -485,6 +767,15 @@ export type integration_settingsSelect<ExtArgs extends runtime.Types.Extensions.
   target_status_id?: boolean
   target_pipeline_id?: boolean
   target_responsible_user_id?: boolean
+  priority_open_status_id?: boolean
+  comment_template?: boolean
+  ai_pipeline_id?: boolean
+  ai_trigger_status_id?: boolean
+  ai_responsible_user_id?: boolean
+  ai_start_time_field_id?: boolean
+  autoblock_status_id?: boolean
+  handoff_status_id?: boolean
+  success_status_id?: boolean
   created_at?: boolean
   updated_at?: boolean
   integration?: boolean | Prisma.integrationsDefaultArgs<ExtArgs>
@@ -495,6 +786,15 @@ export type integration_settingsSelectCreateManyAndReturn<ExtArgs extends runtim
   target_status_id?: boolean
   target_pipeline_id?: boolean
   target_responsible_user_id?: boolean
+  priority_open_status_id?: boolean
+  comment_template?: boolean
+  ai_pipeline_id?: boolean
+  ai_trigger_status_id?: boolean
+  ai_responsible_user_id?: boolean
+  ai_start_time_field_id?: boolean
+  autoblock_status_id?: boolean
+  handoff_status_id?: boolean
+  success_status_id?: boolean
   created_at?: boolean
   updated_at?: boolean
   integration?: boolean | Prisma.integrationsDefaultArgs<ExtArgs>
@@ -505,6 +805,15 @@ export type integration_settingsSelectUpdateManyAndReturn<ExtArgs extends runtim
   target_status_id?: boolean
   target_pipeline_id?: boolean
   target_responsible_user_id?: boolean
+  priority_open_status_id?: boolean
+  comment_template?: boolean
+  ai_pipeline_id?: boolean
+  ai_trigger_status_id?: boolean
+  ai_responsible_user_id?: boolean
+  ai_start_time_field_id?: boolean
+  autoblock_status_id?: boolean
+  handoff_status_id?: boolean
+  success_status_id?: boolean
   created_at?: boolean
   updated_at?: boolean
   integration?: boolean | Prisma.integrationsDefaultArgs<ExtArgs>
@@ -515,11 +824,20 @@ export type integration_settingsSelectScalar = {
   target_status_id?: boolean
   target_pipeline_id?: boolean
   target_responsible_user_id?: boolean
+  priority_open_status_id?: boolean
+  comment_template?: boolean
+  ai_pipeline_id?: boolean
+  ai_trigger_status_id?: boolean
+  ai_responsible_user_id?: boolean
+  ai_start_time_field_id?: boolean
+  autoblock_status_id?: boolean
+  handoff_status_id?: boolean
+  success_status_id?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type integration_settingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"domain" | "target_status_id" | "target_pipeline_id" | "target_responsible_user_id" | "created_at" | "updated_at", ExtArgs["result"]["integration_settings"]>
+export type integration_settingsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"domain" | "target_status_id" | "target_pipeline_id" | "target_responsible_user_id" | "priority_open_status_id" | "comment_template" | "ai_pipeline_id" | "ai_trigger_status_id" | "ai_responsible_user_id" | "ai_start_time_field_id" | "autoblock_status_id" | "handoff_status_id" | "success_status_id" | "created_at" | "updated_at", ExtArgs["result"]["integration_settings"]>
 export type integration_settingsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   integration?: boolean | Prisma.integrationsDefaultArgs<ExtArgs>
 }
@@ -540,6 +858,15 @@ export type $integration_settingsPayload<ExtArgs extends runtime.Types.Extension
     target_status_id: number | null
     target_pipeline_id: number | null
     target_responsible_user_id: number | null
+    priority_open_status_id: number | null
+    comment_template: string | null
+    ai_pipeline_id: number | null
+    ai_trigger_status_id: number | null
+    ai_responsible_user_id: number | null
+    ai_start_time_field_id: number | null
+    autoblock_status_id: number | null
+    handoff_status_id: number | null
+    success_status_id: number | null
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["integration_settings"]>
@@ -970,6 +1297,15 @@ export interface integration_settingsFieldRefs {
   readonly target_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
   readonly target_pipeline_id: Prisma.FieldRef<"integration_settings", 'Int'>
   readonly target_responsible_user_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly priority_open_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly comment_template: Prisma.FieldRef<"integration_settings", 'String'>
+  readonly ai_pipeline_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly ai_trigger_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly ai_responsible_user_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly ai_start_time_field_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly autoblock_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly handoff_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
+  readonly success_status_id: Prisma.FieldRef<"integration_settings", 'Int'>
   readonly created_at: Prisma.FieldRef<"integration_settings", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"integration_settings", 'DateTime'>
 }

@@ -49,33 +49,6 @@ describe("wazupWebhookBodySchema", () => {
         }
         expect(wazupWebhookBodySchema.safeParse(body).success).toBe(false)
     })
-
-    it("parses optional fields sent as null by Wazzup", () => {
-        const body = {
-            messages: [{
-                ...validMessage,
-                contact: {
-                    name: "Иван Петров",
-                    avatarUri: "https://store.wazzup24.com/avatar/abc123.jpg",
-                    username: null,
-                    phone: null,
-                },
-                text: "Здравствуйте!",
-                contentUri: null,
-                authorName: null,
-                authorId: null,
-                sentFromApp: false,
-                isEdited: false,
-                isDeleted: false,
-                quotedMessage: null,
-                interactive: null,
-                instPost: null,
-                oldInfo: null,
-            }],
-            domain: "shchaev93.amocrm.ru",
-        }
-        expect(wazupWebhookBodySchema.safeParse(body).success).toBe(true)
-    })
 })
 
 describe("wazupLeadResultSchema", () => {

@@ -85,16 +85,38 @@ describe("integration settings + dropdowns routes", () => {
             },
             integration_settings: {
                 findUnique: vi.fn().mockResolvedValue(null),
-                upsert: vi.fn().mockImplementation(({ create, update }: any) => ({
-                    domain: "test.amocrm.ru",
-                    target_status_id: (create ?? update).target_status_id ?? null,
-                    target_pipeline_id: (create ?? update).target_pipeline_id ?? null,
-                    target_responsible_user_id: (create ?? update).target_responsible_user_id ?? null,
-                })),
+                upsert: vi.fn().mockImplementation(({ create, update }: any) => {
+                    const d = create ?? update
+                    return {
+                        domain: "test.amocrm.ru",
+                        target_status_id: d.target_status_id ?? null,
+                        target_pipeline_id: d.target_pipeline_id ?? null,
+                        target_responsible_user_id: d.target_responsible_user_id ?? null,
+                        priority_open_status_id: d.priority_open_status_id ?? null,
+                        comment_template: d.comment_template ?? null,
+                        ai_pipeline_id: d.ai_pipeline_id ?? null,
+                        ai_trigger_status_id: d.ai_trigger_status_id ?? null,
+                        ai_responsible_user_id: d.ai_responsible_user_id ?? null,
+                        ai_start_time_field_id: d.ai_start_time_field_id ?? null,
+                        autoblock_status_id: d.autoblock_status_id ?? null,
+                        handoff_status_id: d.handoff_status_id ?? null,
+                        success_status_id: d.success_status_id ?? null,
+                    }
+                }),
+            },
+            lead_stage_events: {
+                findMany: vi.fn().mockResolvedValue([
+                    {
+                        id: 5, domain: "test.amocrm.ru", source: "manual", lead_id: 555,
+                        status_id: 142, pipeline_id: null, responsible_user_id: 7,
+                        success: true, error: null, created_at: new Date("2026-06-11T10:00:00.000Z"),
+                    },
+                ]),
             },
         }
         amoClient = {
             auth: { refreshToken: vi.fn() },
+            account: { getAmojoID: vi.fn().mockResolvedValue("amojo-123") },
             leads: {
                 getPipelines: vi.fn().mockResolvedValue({
                     _embedded: {
@@ -132,6 +154,15 @@ describe("integration settings + dropdowns routes", () => {
             status_id: null,
             pipeline_id: null,
             responsible_user_id: null,
+            priority_open_status_id: null,
+            comment_template: null,
+            ai_pipeline_id: null,
+            ai_trigger_status_id: null,
+            ai_responsible_user_id: null,
+            ai_start_time_field_id: null,
+            autoblock_status_id: null,
+            handoff_status_id: null,
+            success_status_id: null,
         })
     })
 
@@ -139,7 +170,7 @@ describe("integration settings + dropdowns routes", () => {
         const res = await app.inject({
             method: "PUT",
             url: "/integration/test.amocrm.ru/lead-stage-settings",
-            payload: { status_id: 142, pipeline_id: 1, responsible_user_id: 7 },
+            payload: { status_id: 142, pipeline_id: 1, responsible_user_id: 7, priority_open_status_id: 9, comment_template: "привет" },
         })
         expect(res.statusCode).toBe(200)
         expect(res.json()).toEqual({
@@ -147,11 +178,24 @@ describe("integration settings + dropdowns routes", () => {
             status_id: 142,
             pipeline_id: 1,
             responsible_user_id: 7,
+            priority_open_status_id: 9,
+            comment_template: "привет",
+            ai_pipeline_id: null,
+            ai_trigger_status_id: null,
+            ai_responsible_user_id: null,
+            ai_start_time_field_id: null,
+            autoblock_status_id: null,
+            handoff_status_id: null,
+            success_status_id: null,
         })
+        const aiNulls = {
+            ai_pipeline_id: null, ai_trigger_status_id: null, ai_responsible_user_id: null,
+            ai_start_time_field_id: null, autoblock_status_id: null, handoff_status_id: null, success_status_id: null,
+        }
         expect(prisma.integration_settings.upsert).toHaveBeenCalledWith({
             where: { domain: "test.amocrm.ru" },
-            create: { domain: "test.amocrm.ru", target_status_id: 142, target_pipeline_id: 1, target_responsible_user_id: 7 },
-            update: { target_status_id: 142, target_pipeline_id: 1, target_responsible_user_id: 7 },
+            create: { domain: "test.amocrm.ru", target_status_id: 142, target_pipeline_id: 1, target_responsible_user_id: 7, priority_open_status_id: 9, comment_template: "привет", ...aiNulls },
+            update: { target_status_id: 142, target_pipeline_id: 1, target_responsible_user_id: 7, priority_open_status_id: 9, comment_template: "привет", ...aiNulls },
         })
     })
 
@@ -162,7 +206,10 @@ describe("integration settings + dropdowns routes", () => {
             payload: {},
         })
         expect(res.statusCode).toBe(200)
-        expect(res.json()).toMatchObject({ status_id: null, pipeline_id: null, responsible_user_id: null })
+        expect(res.json()).toMatchObject({
+            status_id: null, pipeline_id: null, responsible_user_id: null,
+            priority_open_status_id: null, comment_template: null,
+        })
     })
 
     it("PUT 400 при отрицательном status_id", async () => {
@@ -170,6 +217,15 @@ describe("integration settings + dropdowns routes", () => {
             method: "PUT",
             url: "/integration/test.amocrm.ru/lead-stage-settings",
             payload: { status_id: -5 },
+        })
+        expect(res.statusCode).toBe(400)
+    })
+
+    it("PUT 400 при пустом comment_template", async () => {
+        const res = await app.inject({
+            method: "PUT",
+            url: "/integration/test.amocrm.ru/lead-stage-settings",
+            payload: { comment_template: "   " },
         })
         expect(res.statusCode).toBe(400)
     })
@@ -193,5 +249,50 @@ describe("integration settings + dropdowns routes", () => {
         const res = await app.inject({ method: "GET", url: "/integration/missing.amocrm.ru/pipelines" })
         expect(res.statusCode).toBe(500)
         expect(res.json()).toMatchObject({ message: "Internal server error" })
+    })
+
+    it("GET /:domain/health возвращает ok при успешном вызове amo", async () => {
+        const res = await app.inject({ method: "GET", url: "/integration/test.amocrm.ru/health" })
+        expect(res.statusCode).toBe(200)
+        expect(res.json()).toEqual({ ok: true, amojoId: "amojo-123" })
+    })
+
+    it("GET /:domain/health возвращает ok:false, если amo упал", async () => {
+        amoClient.account.getAmojoID.mockRejectedValue(new Error("HTTP 500: boom"))
+        const res = await app.inject({ method: "GET", url: "/integration/test.amocrm.ru/health" })
+        expect(res.statusCode).toBe(200)
+        const body = res.json()
+        expect(body.ok).toBe(false)
+        expect(body.error).toContain("boom")
+    })
+
+    it("GET /:domain/activity возвращает события журнала", async () => {
+        const res = await app.inject({ method: "GET", url: "/integration/test.amocrm.ru/activity" })
+        expect(res.statusCode).toBe(200)
+        expect(res.json()).toEqual({
+            events: [
+                {
+                    id: 5, source: "manual", lead_id: 555, status_id: 142, pipeline_id: null,
+                    responsible_user_id: 7, success: true, error: null,
+                    created_at: "2026-06-11T10:00:00.000Z",
+                },
+            ],
+        })
+    })
+
+    it("DELETE /:domain мягко отключает интеграцию", async () => {
+        const res = await app.inject({ method: "DELETE", url: "/integration/test.amocrm.ru" })
+        expect(res.statusCode).toBe(200)
+        expect(res.json()).toEqual({ message: "Integration disconnected" })
+        expect(prisma.integrations.update).toHaveBeenCalledWith({
+            where: { domain: "test.amocrm.ru", deleted_at: null },
+            data: expect.objectContaining({ deleted_at: expect.any(Date), active: false }),
+        })
+    })
+
+    it("DELETE /:domain 500, если интеграция не найдена", async () => {
+        prisma.integrations.update.mockRejectedValue(new Error("P2025"))
+        const res = await app.inject({ method: "DELETE", url: "/integration/missing.amocrm.ru" })
+        expect(res.statusCode).toBe(500)
     })
 })

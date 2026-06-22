@@ -25,6 +25,13 @@
     <button type="button" class="btn" id="login">Войти через amoCRM</button>
   </main>
 
+  <section class="card" id="accounts-card">
+    <h1>Аккаунты</h1>
+    <p class="muted">Подключённые интеграции amoCRM. Можно включить/выключить и проверить связь.</p>
+    <p class="err" id="accounts-err" hidden></p>
+    <div id="accounts-list" class="rows"></div>
+  </section>
+
   <section class="card" id="settings-card">
     <h1>Этап и ответственный</h1>
     <p class="muted">Куда переводить сделку при вызове <code>PATCH /api/v1/leads/:id/stage</code>.</p>
@@ -44,9 +51,88 @@
       <select id="settings-user"></select>
     </label>
 
+    <label class="field">
+      <span class="field-label">Приоритетный этап (выбор из нескольких открытых сделок)</span>
+      <select id="settings-priority"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Шаблон комментария (заметка по умолчанию)</span>
+      <textarea id="settings-template" rows="2" placeholder="Напр.: Обращение обработано ассистентом"></textarea>
+    </label>
+
+    <div class="divider"></div>
+
+    <h2 class="subhead">ИИ-воронка (n8n)</h2>
+    <p class="muted">Воронка и этапы, по которым ИИ-ассистент ведёт сделку. Используются эндпоинтами <code>/api/v1/leads/resolve</code> и <code>/api/v1/leads/:id/transition</code>.</p>
+
+    <label class="field">
+      <span class="field-label">ИИ-воронка</span>
+      <select id="ai-pipeline"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Этап-триггер (когда ИИ вступает в диалог)</span>
+      <select id="ai-trigger"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Ответственный-бот</span>
+      <select id="ai-responsible"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Этап автоблокировки</span>
+      <select id="ai-autoblock"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Этап передачи менеджеру</span>
+      <select id="ai-handoff"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">Этап «успешно»</span>
+      <select id="ai-success"></select>
+    </label>
+
+    <label class="field">
+      <span class="field-label">ID поля «время старта ИИ»</span>
+      <input type="number" id="ai-start-field" inputmode="numeric" placeholder="напр. 1320673" />
+    </label>
+
     <p class="err" id="settings-err" hidden></p>
     <p class="ok" id="settings-ok" hidden></p>
     <button type="button" class="btn" id="settings-save" disabled>Сохранить</button>
+
+    <div class="divider"></div>
+
+    <h2 class="subhead">amoCRM API токен</h2>
+    <p class="muted">Статичный долгоживущий Bearer-токен для вызовов amoCRM (как в n8n). После сохранения не отображается.</p>
+    <label class="field">
+      <span class="field-label">Токен</span>
+      <input type="password" id="amo-token" autocomplete="off" spellcheck="false" placeholder="Bearer-токен интеграции amoCRM" />
+    </label>
+    <p class="err" id="amo-token-err" hidden></p>
+    <p class="ok" id="amo-token-ok" hidden></p>
+    <button type="button" class="btn secondary" id="amo-token-save" disabled>Сохранить токен</button>
+
+    <div class="divider"></div>
+
+    <h2 class="subhead">Тест смены этапа</h2>
+    <p class="muted">Прогнать сохранённые настройки на конкретной сделке.</p>
+    <label class="field">
+      <span class="field-label">ID сделки</span>
+      <input type="number" id="test-lead-id" inputmode="numeric" placeholder="напр. 12345" />
+    </label>
+    <button type="button" class="btn secondary" id="test-run" disabled>Сменить этап у сделки</button>
+    <p class="err" id="test-err" hidden></p>
+    <p class="ok" id="test-ok" hidden></p>
+
+    <div class="divider"></div>
+
+    <h2 class="subhead">Журнал смен этапа</h2>
+    <div id="activity-list" class="rows"></div>
   </section>
 
   <script type="module" src="/src/main.ts"></script>
