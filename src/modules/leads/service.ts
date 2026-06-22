@@ -4,7 +4,7 @@ import { logger } from "../../logger.js";
 import { callAmo } from "../../infra/amo/call_amo.js";
 import { Integration } from "../../models/integration.js";
 import { AddNotesBody, AddNotesResponse } from "../../infra/amo/notes.js";
-import { UpdateLeadBody, UpdateLeadResponse, GetLeadResponse } from "../../infra/amo/leads.js";
+import { UpdateLeadBody, UpdateLeadResponse } from "../../infra/amo/leads.js";
 import { LeadStageSettings } from "../../models/integration_settings.js";
 import { LeadResolver } from "../shared/lead_resolver.js";
 
@@ -161,15 +161,33 @@ export class LeadsService {
             lead.pipeline_id === settings.aiPipelineId &&
             lead.status_id === settings.aiTriggerStatusId
 
-        // «Время старта ИИ» — под капотом, идемпотентно (заменяет If1 + set start ai time).
-        let aiStartSet = false
-        if (shouldEngage && settings?.aiStartTimeFieldId != null) {
-            aiStartSet = await this.ensureAiStartTime(integration, lead, settings.aiStartTimeFieldId)
-        }
-
         const custom_fields = (lead.custom_fields_values ?? []).flatMap((field) =>
             field.values.map((entry) => ({ field_id: field.field_id, name: field.field_name, value: entry.value })),
         )
+
+        // «Время старта ИИ» — под капотом, идемпотентно (заменяет If1 + set start ai time).
+        let aiStartSet = false
+        if (settings?.aiStartTimeFieldId != null) {
+            const fieldId = settings.aiStartTimeFieldId
+            const hasAiStartField = custom_fields.some((f) => f.field_id === fieldId)
+            if (!hasAiStartField) {
+                const timestamp = Math.floor(Date.now() / 1000)
+                aiStartSet = await this.ensureAiStartTime(integration, lead.id, fieldId, timestamp)
+                if (aiStartSet) {
+                    custom_fields.push({ field_id: fieldId, name: "", value: timestamp })
+                }
+
+                const body: UpdateLeadBody = {
+                    custom_fields_values: [{ field_id: fieldId, values: [{ value: timestamp }] }],
+                }
+                try {
+                    await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, lead.id, body))
+                } catch (error) {
+                    logger.error("LeadsService - updateLead - update lead", { domain, leadId: lead.id, error: error as Error })
+                    throw new Error(`LeadsService - updateLead - update lead: ${error as Error}`)
+                }
+            }
+        }
 
         return {
             found: true,
@@ -231,22 +249,17 @@ export class LeadsService {
         return { pipeline_id: settings.aiPipelineId, status_id: statusId }
     }
 
-    /** Проставляем «время старта ИИ», если поле ещё не заполнено. best-effort, возвращает было ли проставлено. */
-    private async ensureAiStartTime(integration: Integration, lead: GetLeadResponse, fieldId: number): Promise<boolean> {
-        const alreadySet = (lead.custom_fields_values ?? []).some((f) => f.field_id === fieldId)
-        if (alreadySet) {
-            return false
-        }
-
+    /** Проставляем «время старта ИИ» через Amo API. best-effort, возвращает было ли проставлено. */
+    private async ensureAiStartTime(integration: Integration, leadId: number, fieldId: number, timestamp: number): Promise<boolean> {
         const body: UpdateLeadBody = {
-            custom_fields_values: [{ field_id: fieldId, values: [{ value: Math.floor(Date.now() / 1000) }] }],
+            custom_fields_values: [{ field_id: fieldId, values: [{ value: timestamp }] }],
         }
 
         try {
-            await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, lead.id, body))
+            await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, leadId, body))
             return true
         } catch (error) {
-            logger.error("LeadsService - ensureAiStartTime - update lead (ignored)", { domain: integration.domain, leadId: lead.id, error: error as Error })
+            logger.error("LeadsService - ensureAiStartTime - update lead (ignored)", { domain: integration.domain, leadId, error: error as Error })
             return false
         }
     }
