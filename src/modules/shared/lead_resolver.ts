@@ -70,6 +70,8 @@ export class LeadResolver {
         }
 
         const leads = await this.getLeads(integration, leadIds)
+        logger.debug("LeadResolver - findLead - leads", { leads })
+
         const selected = this.selectLead(leads, priorityOpenStatusId)
         if (!selected) {
             return { status: "skipped", reason: "нет открытых сделок" }
