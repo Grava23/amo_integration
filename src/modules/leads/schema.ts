@@ -61,9 +61,9 @@ export type UpdateLeadParams = z.infer<typeof updateLeadParamsSchema>
 
 export const updateLeadBodySchema = z.object({
     domain: z.string(),
-    statusId: z.number().int().positive().optional(),
-    pipelineId: z.number().int().positive().optional(),
-    responsibleUserId: z.number().int().positive().optional(),
+    statusId: z.number().int().positive().optional().nullable(),
+    pipelineId: z.number().int().positive().optional().nullable(),
+    responsibleUserId: z.number().int().positive().optional().nullable(),
 })
 
 export type UpdateLeadBody = z.infer<typeof updateLeadBodySchema>
