@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { AddLeadCommentBody, AddLeadCommentParams, ChangeLeadStageBody, ChangeLeadStageParams, ResolveLeadBody, TransitionLeadBody, TransitionLeadParams } from "./schema.js";
+import { AddLeadCommentBody, AddLeadCommentParams, ChangeLeadStageBody, ChangeLeadStageParams, ResolveLeadBody, TransitionLeadBody, TransitionLeadParams, UpdateLeadBody, UpdateLeadParams } from "./schema.js";
 import { ConfigError, LeadsService } from "./service.js";
 import { LeadsRepo } from "./repo.js";
 
@@ -71,6 +71,24 @@ export async function transitionLeadController(req: FastifyRequest<{ Params: Tra
         if (error instanceof ConfigError) {
             return reply.status(400).send({ message: error.message })
         }
+        return reply.status(500).send({
+            message: "Internal server error",
+            error: (error as Error).message,
+        })
+    }
+}
+
+export async function updateLeadController(req: FastifyRequest<{ Params: UpdateLeadParams, Body: UpdateLeadBody }>, reply: FastifyReply) {
+    const { leadId } = req.params
+    const { domain, statusId, pipelineId, responsibleUserId } = req.body
+
+    const repo = new LeadsRepo(req.server.prisma)
+    const service = new LeadsService(req.server.amoClient, repo)
+
+    try {
+        const result = await service.updateLead(domain, leadId, statusId ?? null, pipelineId ?? null, responsibleUserId ?? null)
+        return reply.status(200).send(result)
+    } catch (error) {
         return reply.status(500).send({
             message: "Internal server error",
             error: (error as Error).message,

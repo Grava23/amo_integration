@@ -318,4 +318,20 @@ export class LeadsService {
             logger.error("LeadsService - changeStageAndResponsible - log event (ignored)", { domain, leadId, error: logError as Error })
         }
     }
+
+    async updateLead(domain: string, leadId: number, statusId: number | null, pipelineId: number | null, responsibleUserId: number | null): Promise<UpdateLeadResponse> {
+        const integration = await this.getIntegration(domain, "updateLead")
+        const body: UpdateLeadBody = {
+            status_id: statusId ?? undefined,
+            pipeline_id: pipelineId ?? undefined,
+            responsible_user_id: responsibleUserId ?? undefined,
+        }
+        try {
+            return await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, leadId, body))
+        } catch (error) {
+            logger.error("LeadsService - updateLead - update lead", { domain, leadId, statusId, pipelineId, responsibleUserId, error: error as Error })
+            throw new Error(`LeadsService - updateLead - update lead: ${error as Error}`)
+        }
+    }
 }
+

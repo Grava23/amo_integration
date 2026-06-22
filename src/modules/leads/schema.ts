@@ -52,3 +52,18 @@ export const transitionLeadBodySchema = z.object({
 })
 
 export type TransitionLeadBody = z.infer<typeof transitionLeadBodySchema>
+
+export const updateLeadParamsSchema = z.object({
+    leadId: z.coerce.number().int().positive(),
+})
+
+export type UpdateLeadParams = z.infer<typeof updateLeadParamsSchema>
+
+export const updateLeadBodySchema = z.object({
+    domain: z.string(),
+    statusId: z.number().int().positive().optional(),
+    pipelineId: z.number().int().positive().optional(),
+    responsibleUserId: z.number().int().positive().optional(),
+})
+
+export type UpdateLeadBody = z.infer<typeof updateLeadBodySchema>
