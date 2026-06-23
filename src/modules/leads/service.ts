@@ -346,5 +346,30 @@ export class LeadsService {
             throw new Error(`LeadsService - updateLead - update lead: ${error as Error}`)
         }
     }
+
+    /** Обновляет значение кастомного поля сделки в AmoCRM. */
+    async updateLeadCustomField(domain: string, leadId: number, fieldId: number, value: unknown): Promise<UpdateLeadResponse> {
+        const integration = await this.getIntegration(domain, "updateLeadCustomField")
+        const body: UpdateLeadBody = {
+            custom_fields_values: [{ field_id: fieldId, values: this.normalizeCustomFieldValues(value) }],
+        }
+        try {
+            return await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, leadId, body))
+        } catch (error) {
+            logger.error("LeadsService - updateLeadCustomField - update lead", { domain, leadId, fieldId, value, error: error as Error })
+            throw new Error(`LeadsService - updateLeadCustomField - update lead: ${error as Error}`)
+        }
+    }
+
+    /** Скаляр → [{ value }], массив примитивов → несколько values, уже amo-формат — как есть. */
+    private normalizeCustomFieldValues(value: unknown): { value: unknown }[] {
+        if (Array.isArray(value)) {
+            if (value.length > 0 && typeof value[0] === "object" && value[0] !== null && "value" in value[0]) {
+                return value as { value: unknown }[]
+            }
+            return value.map((item) => ({ value: item }))
+        }
+        return [{ value }]
+    }
 }
 

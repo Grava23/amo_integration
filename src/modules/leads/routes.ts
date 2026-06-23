@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
-import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema, resolveLeadBodySchema, transitionLeadParamsSchema, transitionLeadBodySchema, updateLeadParamsSchema, updateLeadBodySchema } from "./schema.js";
-import { addLeadCommentController, changeLeadStageController, resolveLeadController, transitionLeadController, updateLeadController } from "./controller.js";
+import { addLeadCommentParamsSchema, addLeadCommentBodySchema, changeLeadStageParamsSchema, changeLeadStageBodySchema, resolveLeadBodySchema, transitionLeadParamsSchema, transitionLeadBodySchema, updateLeadCustomFieldBodySchema, updateLeadCustomFieldParamsSchema, updateLeadParamsSchema, updateLeadBodySchema } from "./schema.js";
+import { addLeadCommentController, changeLeadStageController, resolveLeadController, transitionLeadController, updateLeadController, updateLeadCustomFieldController } from "./controller.js";
 
 const leadsRoutes: FastifyPluginAsync = async (app) => {
     app.post("/:leadId/notes",
@@ -38,6 +38,14 @@ const leadsRoutes: FastifyPluginAsync = async (app) => {
             }
         },
         transitionLeadController)
+
+    app.patch("/:leadId/custom-fields/:fieldId", {
+        schema: {
+            params: updateLeadCustomFieldParamsSchema,
+            body: updateLeadCustomFieldBodySchema,
+        },
+    },
+        updateLeadCustomFieldController)
 
     app.patch("/:leadId", {
         schema: {

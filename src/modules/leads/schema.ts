@@ -67,3 +67,18 @@ export const updateLeadBodySchema = z.object({
 })
 
 export type UpdateLeadBody = z.infer<typeof updateLeadBodySchema>
+
+// PATCH /leads/:leadId/custom-fields/:fieldId — изменение значения кастомного поля сделки.
+export const updateLeadCustomFieldParamsSchema = z.object({
+    leadId: z.coerce.number().int().positive(),
+    fieldId: z.coerce.number().int().positive(),
+})
+
+export type UpdateLeadCustomFieldParams = z.infer<typeof updateLeadCustomFieldParamsSchema>
+
+export const updateLeadCustomFieldBodySchema = z.object({
+    domain: z.string(),
+    value: z.any(),
+})
+
+export type UpdateLeadCustomFieldBody = z.infer<typeof updateLeadCustomFieldBodySchema>

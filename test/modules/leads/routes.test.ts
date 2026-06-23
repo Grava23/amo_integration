@@ -173,3 +173,75 @@ describe("PATCH /:leadId/stage (leads routes)", () => {
         expect(res.json()).toMatchObject({ message: "Internal server error" })
     })
 })
+
+describe("PATCH /:leadId/custom-fields/:fieldId (leads routes)", () => {
+    let app: FastifyInstance
+    let prisma: any
+    let amoClient: any
+
+    beforeEach(async () => {
+        prisma = {
+            integrations: {
+                findUniqueOrThrow: vi.fn().mockResolvedValue(integrationRow()),
+                update: vi.fn().mockResolvedValue(integrationRow()),
+            },
+        }
+        amoClient = {
+            auth: { refreshToken: vi.fn() },
+            leads: {
+                updateLead: vi.fn().mockResolvedValue({ id: 555, status_id: 142 }),
+            },
+        }
+        app = buildApp({ prisma, amoClient })
+        await app.register(leadsRoutes, { prefix: "/leads" })
+        await app.ready()
+    })
+    afterEach(async () => {
+        await app.close()
+    })
+
+    it("обновляет кастомное поле и возвращает 200", async () => {
+        const res = await app.inject({
+            method: "PATCH",
+            url: "/leads/555/custom-fields/1320673",
+            payload: { domain: "test.amocrm.ru", value: "Москва" },
+        })
+
+        expect(res.statusCode).toBe(200)
+        expect(amoClient.leads.updateLead).toHaveBeenCalledWith(
+            "test.amocrm.ru",
+            "access",
+            555,
+            {
+                custom_fields_values: [{
+                    field_id: 1320673,
+                    values: [{ value: "Москва" }],
+                }],
+            },
+        )
+    })
+
+    it("принимает массив значений для мультиселекта", async () => {
+        const res = await app.inject({
+            method: "PATCH",
+            url: "/leads/555/custom-fields/100",
+            payload: { domain: "test.amocrm.ru", value: ["a", "b"] },
+        })
+
+        expect(res.statusCode).toBe(200)
+        const body = amoClient.leads.updateLead.mock.calls[0][3]
+        expect(body.custom_fields_values[0].values).toEqual([
+            { value: "a" },
+            { value: "b" },
+        ])
+    })
+
+    it("400 при нечисловом fieldId", async () => {
+        const res = await app.inject({
+            method: "PATCH",
+            url: "/leads/555/custom-fields/abc",
+            payload: { domain: "test.amocrm.ru", value: 1 },
+        })
+        expect(res.statusCode).toBe(400)
+    })
+})
