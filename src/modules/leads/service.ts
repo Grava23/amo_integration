@@ -184,7 +184,6 @@ export class LeadsService {
                     await callAmo(integration, this.leadsRepo, this.amoClient.auth, (accessToken) => this.amoClient.leads.updateLead(integration.domain, accessToken, lead.id, body))
                 } catch (error) {
                     logger.error("LeadsService - updateLead - update lead", { domain, leadId: lead.id, error: error as Error })
-                    throw new Error(`LeadsService - updateLead - update lead: ${error as Error}`)
                 }
             }
         }

@@ -279,6 +279,21 @@ describe("LeadsService.resolveLead", () => {
         expect(typeof body.custom_fields_values[0].values[0].value).toBe("number")
     })
 
+    it("возвращает сделку, если не удалось проставить время старта ИИ", async () => {
+        amoClient.leads.updateLead.mockRejectedValue(new Error("Not enough rights"))
+        const svc = new LeadsService(amoClient, repo)
+
+        const result = await svc.resolveLead("test.amocrm.ru", { chatType: "whatsapp", chatId: "79990001122" })
+
+        expect(result).toMatchObject({
+            found: true,
+            lead_id: 100,
+            should_engage_ai: true,
+            ai_start_set: false,
+        })
+        expect(amoClient.leads.updateLead).toHaveBeenCalledTimes(1)
+    })
+
     it("не трогает время старта ИИ, если поле уже заполнено", async () => {
         amoClient.leads.getLead.mockResolvedValue(makeLead({
             custom_fields_values: [{ field_id: 1320673, field_name: "AI start", values: [{ value: 123 }] }],
@@ -291,14 +306,14 @@ describe("LeadsService.resolveLead", () => {
         expect(amoClient.leads.updateLead).not.toHaveBeenCalled()
     })
 
-    it("should_engage_ai=false при несовпадении этапа-триггера (время старта не проставляется)", async () => {
+    it("should_engage_ai=false при несовпадении этапа-триггера", async () => {
         amoClient.leads.getLead.mockResolvedValue(makeLead({ status_id: 999 }))
         const svc = new LeadsService(amoClient, repo)
 
         const result = await svc.resolveLead("test.amocrm.ru", { chatType: "whatsapp", chatId: "79990001122" })
 
-        expect(result).toMatchObject({ found: true, should_engage_ai: false, ai_start_set: false })
-        expect(amoClient.leads.updateLead).not.toHaveBeenCalled()
+        expect(result).toMatchObject({ found: true, should_engage_ai: false, ai_start_set: true })
+        expect(amoClient.leads.updateLead).toHaveBeenCalledTimes(1)
     })
 
     it("found=false, если контакт не найден", async () => {
